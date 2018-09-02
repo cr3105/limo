@@ -19,14 +19,10 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="desktop.ini" />
     <Content Include="Logs\SabreSDQP\iMX6QP_2016-11-23_143748.txt" />
-    <Content Include="New Text Document %283%29.txt" />
-    <Content Include="New Text Document.txt" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="david_code_modified.py" />
-    <Compile Include="modulliste 2 versuch sus nur einmal 3 mit sets.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Logs\" />
