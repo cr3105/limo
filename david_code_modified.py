@@ -16,13 +16,13 @@ def modulliste(modul_id: str) -> set:
     :return: A list of student ids representing the pool of student's who've chosen this modul.
     """
 
-    global cursor
+    query = "SELECT StudentID FROM modulwahl WHERE %s = 1"
 
-    query = f"SELECT * FROM modulwahl WHERE %s = 1"
-    cursor.execute(query, modul_id)
+    results = execute_db_command(query, modul_id)
+
     module = set()
 
-    for modul in cursor:
+    for modul in results:
         module.add(modul[0])
 
     return module
@@ -35,12 +35,12 @@ def schuelerliste() -> set:
     :return: A set containing the ids of all students.
     """
 
-    global cursor
-    cursor.execute("SELECT * \n FROM modulwahl")
+    query = "SELECT * FROM modulwahl"
+   	results = execute_db_command(query)
 
     student_list = set()
 
-    for student in cursor:
+    for student in results:
         student_list.add(student[0])
 
     return student_list
@@ -96,11 +96,15 @@ def main() -> None:
 
     try:
         connection = connect_to_db()
-        run(connection=connection)
+        result = run(connection=connection, {'deutsch': 10, 'english': 10, 'mathe': 10, 'franz': 4, 'segel': 8, 'num_sections': 9, 'num_courses': 9})
+        output_results(result)
+        connection.close()
+
         exit(0)
 
     except Exception as e:
         print(f'Something broke ...\n\tReason:{str(e)}')
+        connection.close()
         exit(1)
 
 
@@ -117,6 +121,7 @@ def connect_to_db() -> object:
             config = loads(environ['limoinput_connection'])
             connection = connect(**config)
             print("Verbindung erfolgreich\n")
+
         else:
             print('SQL connection string not found!')
 
@@ -203,7 +208,50 @@ def execute_db_command(connection: object, command: str, *args: tuple) -> list:
     return results
 
 
-def run(connection: object) -> None:
+def get_modules(**kwargs: dict) -> dict:
+	laengen = [ kwargs['deutsch'], kwargs['english'], kwargs['mathe'], kwargs['franz'], kwargs['segels'] ]
+    prefixes = ['D', 'E', 'M', 'F', 'S']
+
+    modullisten = {'D': [], 'E': [], 'M': [], 'F': [], 'S': []}
+    # modullisten (student_ids, modul_name)
+
+    for length, prefix in zip(laengen, prefixes):  
+        for cur in range(length):  					
+            modullisten[prefix].append((modulliste('{}{}'.format(prefix, cur + 1)), '{}{}'.format(prefix, cur + 1)))
+
+    return modullisten
+
+
+def output_results(result: list) -> None:
+	for i, temp in enumerate(result):
+        print("*" * 75)
+        print("\nBegin Section {}: ".format(i + 1))
+        seen = {}
+
+        for modul in temp:
+            print(f"{modul[1]}: {modul[0]}\n\tAnzahl Schueler: {len(modul[0])}\n")
+
+            for s in modul[0]:
+                if s in seen:
+                    print(f'Student {s} is in multiple modules!')
+                else:
+                    seen[s] = s
+
+        print("*" * 75)
+
+    for i, _ in enumerate(result):
+        f = open(f'./RESULTS/section{i+1}.txt', 'a')
+
+        for modul in result[i]:
+            f.write(f"{modul[1]}: {modul[0]}\n\tAnzahl Schueler: {len(modul[0])}\n")
+        f.close()
+
+
+def get_module_sizes(modullisten: dict) -> list:
+
+
+
+def run(connection: object, **kwargs: dict) -> None:
     """
     Program main thread for building the section lists and sending them to the database for permanent storage
 
@@ -216,81 +264,29 @@ def run(connection: object) -> None:
         print('Invalid connection received! Terminating ...')
         exit(1)
 
-    cursor = connection.cursor()
-
-    # Modullisten erstellen
-
-    deutsch = 10
-    english = 10
-    mathe = 10
-    franz = 4
-    segel = 8
-    laengen = [deutsch, english, mathe, franz]
-    prefix = ['D', 'E', 'M', 'F']
-
-    modullisten = []
-    segels = []
-
-    for i, j in zip(laengen, prefix):  # zip gibt Tupel zurueck solange möglich    hier 4 Tupel
-        for k in range(i):  # fuer Deu 10 Kurse, fuer E 10 Kurse usw.
-            modullisten.append((modulliste('{}{}'.format(j, k + 1)), '{}{}'.format(j, k + 1)))
-
-    for i in range(segel):
-        segels.append((modulliste('S{}'.format(i + 1)), 'S{}'.format(i + 1)))
-
-    sl = set()
+    leftover = []
     result = []
+    student_set = schuelerliste()
+    modullisten = get_modules(**kwargs)
+    modullisten_sizes = get_module_sizes(modullisten)
 
-    for i in range(9):
-        modullisten.sort(reverse=True)
-        sl = schuelerliste()
-        A = []
-        for j in range(8):
-            A.append((zuteilen(modullisten[j][0], sl), modullisten[j][1]))
+    # 1 E, D, M pro section
+    # all french in one course
 
-        if i == 8:
-            r = randint(0, 7)
-            A.append((zuteilen(segels[r][0], sl), segels[r][1]))
-        else:
-            A.append((zuteilen(segels[i][0], sl), segels[i][1]))
+    for i in range(kwargs['num_sections']):
+        temp_students = set(student_set)
+        temp = []
 
-        A.sort()
-        bias = 0
-        while len(sl) > 0:
-            for k in range(len(A)):
-                number = (22 + bias) - len(A[k][0])
-                picked = sample(sl, number if len(sl) >= number else len(sl))
-                A[k][0].extend(picked)
-                for s in picked:
-                    if s in sl:
-                        sl.discard(s)
-            bias += 1
+        for j in range(kwargs['num_courses']):
+            #temp.append((zuteilen(modullisten[j][0], temp_students), modullisten[j][1]))
+            pass
+        
+        leftover.append(list(temp_students))
 
-        result.append(A)
+        result.append(temp)
 
-    for i, A in enumerate(result):
-        print("*" * 75)
-        print("\nBegin Section {}: ".format(i + 1))
-        seen = {}
-        for modul in A:
-            print(f"{modul[1]}: {modul[0]}\n\tAnzahl Schueler: {len(modul[0])}\n")
-            for s in modul[0]:
-                if s in seen:
-                    print(f'Student {s} is in multiple modules!')
-                else:
-                    seen[s] = s
+	return result
 
-        print("*" * 75)
-
-    for i, _ in enumerate(result):
-        f = open(f'./RESULTS/section{i+1}.txt', 'a')
-        for modul in result[i]:
-            f.write(f"{modul[1]}: {modul[0]}\n\tAnzahl Schueler: {len(modul[0])}\n")
-        f.close()
-
-
-    cursor.close()
-    connection.close()
 
 
 if __name__ == '__main__':
