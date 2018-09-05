@@ -1,4 +1,4 @@
-# Listen für Module anfertigen
+# Listen fuer Module anfertigen
 
 import sys, mysql.connector
 import random
@@ -18,7 +18,7 @@ def modulliste(i):
         j.add(k[0])
     return(j)
 
-# Schülerliste für die Schiene anlegen
+# Schuelerliste fuer die Schiene anlegen
 
 def schuelerliste():
     global cursor
@@ -29,10 +29,10 @@ def schuelerliste():
         sl.add(k[0])
     return sl
 
-# Schüler auswählen und zuteilen
+# Schueler auswaehlen und zuteilen
 
 def zuteilen(source, students): # source = eine Modulliste; students = freie SuS
-    # SuS wählen
+    # SuS waehlen
     picked = []
 
     while len(picked) < 22:
@@ -45,9 +45,9 @@ def zuteilen(source, students): # source = eine Modulliste; students = freie SuS
                 counter += 1
 
         if counter == len(source):
-            break       # beendet äußere while-loop
+            break       # beendet aeussere while-loop
 
-        for s in current:   # Topf wird gefüllt
+        for s in current:   # Topf wird gefuellt
             if len(picked) >= 22:
                 break
             if s not in picked and s in students:
@@ -57,10 +57,10 @@ def zuteilen(source, students): # source = eine Modulliste; students = freie SuS
         if len(source) == 0 or len(students) == 0:
             break        
 
-    # Rückgabe der Kurslisten
+    # Rueckgabe der Kurslisten
     return picked
 
-# Modul füllen
+# Modul fuellen
 
 random.seed()
 
@@ -87,8 +87,8 @@ prefix = ['D', 'E', 'M', 'F']
 modullisten = []
 segels = []
 
-for i, j in zip(langen, prefix):                    # zip gibt Tupel zurück solange möglich    #hier 4 Tupel
-    for k in range(i):                              # für Deu 10 Kurse, für E 10 Kurse usw.
+for i, j in zip(langen, prefix):                    # zip gibt Tupel zurueck solange möglich    hier 4 Tupel
+    for k in range(i):                              # fuer Deu 10 Kurse, fuer E 10 Kurse usw.
         modullisten.append((modulliste('{}{}'.format(j, k + 1)), '{}{}'.format(j, k + 1)))
 
 for i in range(segel):
