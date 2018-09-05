@@ -7,8 +7,84 @@ from random                 import sample, seed, randint                        
 from os                     import environ                                      # access to environment variables
 from json                   import loads                                        # str -> dict conversion
 
+def execute_db_command(connection: object, command: str, *args: tuple) -> list:
+    """
+    Executes the given MySQL ``command`` on the MySQL server in ``connection``. Arguments may be passed via the tuple
 
-def modulliste(modul_id: str) -> set:
+    :param connection: A valid MySQL connection object.
+    :param command: A valid and ready-to-execute MySQL query.
+    :param args: Optional tuple of parameters for the MySQL query.
+    :type connection: :class:``MySQLConnection``
+    :type command: str
+    :type args: tuple
+    :return: A list containing the results of the given query, or an empty list if no results were returned by the
+             database. If a fatal error occurs, ``None`` is returned.
+    """
+
+    results = None
+    cursor = None
+
+    # ensure we have received a valid connection object
+    if not connection or connection is None:
+        print(f'Received invalid MySQLConnection object!\n\tConnection is {type(connection)} expected MySQLConnection.')
+
+    else:
+        try:
+            # create a cursor object for this transaction
+            cursor = connection.cursor()
+
+        except MySQL_Error as e:
+            cursor.close()
+
+            if hasattr(e, 'errno'):
+                print(f'Executing the query failed due to MySQL error {e.errno}.\n\tReason: {str(e)}')
+            else:
+                print(f'Executing the query failed due to MySQL error.\n\tReason: {str(e)}')
+
+            return None
+
+        except Exception as e:
+            cursor.close()
+
+            print(f'Creating cursor object failed due to unknown error.\n\tReason: {str(e)}')
+            return None
+
+        try:
+            # execute the command
+            cursor.execute(command, params=args)
+            print(cursor.statement)
+            # commit the mysql transaction
+            #connection.commit()
+
+        except MySQL_Error as e:
+            # if an error occurs we need to let MySQL know that the last transaction(s) should be discarded
+            print('An error occurred, rolling back changes ...')
+            connection.rollback()
+
+            if hasattr(e, 'errno'):
+                print(f'Executing the query failed due to MySQL error {e.errno}.\n\tReason: {str(e)}')
+            else:
+                print(f'Executing the query failed due to MySQL error.\n\tReason: {str(e)}')
+
+            return None
+
+        except Exception as e:
+            # if an error occurs we need to let MySQL know that the last transaction(s) should be discarded
+            print('An error occurred, rolling back changes ...')
+            connection.rollback()
+
+            print(f'Executing the query failed due to unknown error.\n\tReason: {str(e)}')
+            return None
+
+        # create a list of results
+        results = [item for item in cursor]
+
+        # close the cursor to avoid memory leaks
+        cursor.close()
+
+    return results
+
+def modulliste(connection: object, modul_id: str) -> list:
     """
     Builds the list of all students who selected ``modul_id``.
 
@@ -16,34 +92,18 @@ def modulliste(modul_id: str) -> set:
     :return: A list of student ids representing the pool of student's who've chosen this modul.
     """
 
-    query = "SELECT StudentID FROM modulwahl WHERE %s = 1"
-
-    results = execute_db_command(query, modul_id)
-
-    module = set()
-
-    for modul in results:
-        module.add(modul[0])
-
-    return module
+    query = f"SELECT StudentID FROM modulwahl WHERE {modul_id} = 1;"
+    return [id[0] for id in execute_db_command(connection, query)]
 
 
-def schuelerliste() -> set:
+def schuelerliste(connection: object) -> list:
     """
     Schuelerliste fuer die Schiene anlegen
 
-    :return: A set containing the ids of all students.
+    :return: A list containing the ids of all students.
     """
-
-    query = "SELECT * FROM modulwahl"
-   	results = execute_db_command(query)
-
-    student_list = set()
-
-    for student in results:
-        student_list.add(student[0])
-
-    return student_list
+    query = "SELECT StudentID FROM modulwahl;"
+    return [id[0] for id in execute_db_command(connection, query)]
 
 
 def zuteilen(source: set, students: set) -> list:
@@ -96,7 +156,8 @@ def main() -> None:
 
     try:
         connection = connect_to_db()
-        result = run(connection=connection, {'deutsch': 10, 'english': 10, 'mathe': 10, 'franz': 4, 'segel': 8, 'num_sections': 9, 'num_courses': 9})
+        kwargs = {'deutsch': 10, 'english': 10, 'mathe': 10, 'franz': 4, 'segels': 8, 'num_sections': 9, 'num_courses': 9}
+        result = run(connection=connection, **kwargs)
         output_results(result)
         connection.close()
 
@@ -131,85 +192,10 @@ def connect_to_db() -> object:
     return connection
 
 
-def execute_db_command(connection: object, command: str, *args: tuple) -> list:
-    """
-    Executes the given MySQL ``command`` on the MySQL server in ``connection``. Arguments may be passed via the tuple
-
-    :param connection: A valid MySQL connection object.
-    :param command: A valid and ready-to-execute MySQL query.
-    :param args: Optional tuple of parameters for the MySQL query.
-    :type connection: :class:``MySQLConnection``
-    :type command: str
-    :type args: tuple
-    :return: A list containing the results of the given query, or an empty list if no results were returned by the
-             database. If a fatal error occurs, ``None`` is returned.
-    """
-
-    results = None
-    cursor = None
-
-    # ensure we have received a valid connection object
-    if not connection or connection is None:
-        print(f'Received invalid MySQLConnection object!\n\tConnection is {type(connection)} expected MySQLConnection.')
-
-    else:
-        try:
-            # create a cursor object for this transaction
-            cursor = connection.cursor()
-
-        except MySQL_Error as e:
-            cursor.close()
-
-            if hasattr(e, 'errno'):
-                print(f'Executing the query failed due to MySQL error {e.errno}.\n\tReason: {str(e)}')
-            else:
-                print(f'Executing the query failed due to MySQL error.\n\tReason: {str(e)}')
-
-            return None
-
-        except Exception as e:
-            cursor.close()
-
-            print(f'Creating cursor object failed due to unknown error.\n\tReason: {str(e)}')
-            return None
-
-        try:
-            # execute the command
-            cursor.execute(command, *args)
-            # commit the mysql transaction
-            cursor.commit()
-
-        except MySQL_Error as e:
-            # if an error occurs we need to let MySQL know that the last transaction(s) should be discarded
-            print('An error occurred, rolling back changes ...')
-            connection.rollback()
-
-            if hasattr(e, 'errno'):
-                print(f'Executing the query failed due to MySQL error {e.errno}.\n\tReason: {str(e)}')
-            else:
-                print(f'Executing the query failed due to MySQL error.\n\tReason: {str(e)}')
-
-            return None
-
-        except Exception as e:
-            # if an error occurs we need to let MySQL know that the last transaction(s) should be discarded
-            print('An error occurred, rolling back changes ...')
-            connection.rollback()
-
-            print(f'Executing the query failed due to unknown error.\n\tReason: {str(e)}')
-            return None
-
-        # create a list of results
-        results = [item for item in cursor]
-
-        # close the cursor to avoid memory leaks
-        cursor.close()
-
-    return results
 
 
-def get_modules(**kwargs: dict) -> dict:
-	laengen = [ kwargs['deutsch'], kwargs['english'], kwargs['mathe'], kwargs['franz'], kwargs['segels'] ]
+def get_modules(connection: object, **kwargs: dict) -> dict:
+    laengen = [ kwargs['deutsch'], kwargs['english'], kwargs['mathe'], kwargs['franz'], kwargs['segels'] ]
     prefixes = ['D', 'E', 'M', 'F', 'S']
 
     modullisten = {'D': [], 'E': [], 'M': [], 'F': [], 'S': []}
@@ -217,13 +203,13 @@ def get_modules(**kwargs: dict) -> dict:
 
     for length, prefix in zip(laengen, prefixes):  
         for cur in range(length):  					
-            modullisten[prefix].append((modulliste('{}{}'.format(prefix, cur + 1)), '{}{}'.format(prefix, cur + 1)))
+            modullisten[prefix].append((modulliste(connection, '{}{}'.format(prefix, cur + 1)), '{}{}'.format(prefix, cur + 1)))
 
     return modullisten
 
 
 def output_results(result: list) -> None:
-	for i, temp in enumerate(result):
+    for i, temp in enumerate(result):
         print("*" * 75)
         print("\nBegin Section {}: ".format(i + 1))
         seen = {}
@@ -248,8 +234,7 @@ def output_results(result: list) -> None:
 
 
 def get_module_sizes(modullisten: dict) -> list:
-
-
+    return None
 
 def run(connection: object, **kwargs: dict) -> None:
     """
@@ -266,8 +251,8 @@ def run(connection: object, **kwargs: dict) -> None:
 
     leftover = []
     result = []
-    student_set = schuelerliste()
-    modullisten = get_modules(**kwargs)
+    #student_set = schuelerliste(connection)
+    modullisten = get_modules(connection, **kwargs)
     modullisten_sizes = get_module_sizes(modullisten)
 
     # 1 E, D, M pro section
@@ -285,7 +270,7 @@ def run(connection: object, **kwargs: dict) -> None:
 
         result.append(temp)
 
-	return result
+    return result
 
 
 
