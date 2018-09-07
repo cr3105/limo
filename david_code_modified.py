@@ -485,6 +485,7 @@ def run(connection: object, **kwargs: dict) -> None:
         if len(current_section) > 0:
             continue
 
+        courses_needed = kwargs['num_courses']
         used_courses = {}
         temp_students = set(student_set)
         
@@ -492,6 +493,7 @@ def run(connection: object, **kwargs: dict) -> None:
             current_section.append((modullisten['F'][0][0], modullisten['F'][0][1]))
             remove_set_difference(temp_students, modullisten['F'][0][0])
             french_needed -= 1
+            courses_needed -= 1
         
 
         best_section = None
@@ -503,7 +505,7 @@ def run(connection: object, **kwargs: dict) -> None:
                 for l in v:
                     temp_modullisten[k].append((list(l[0]), str(l[1])))
 
-            temp_section = generate_section(temp_modullisten, list(temp_students), ordering, **kwargs)
+            temp_section = generate_section(temp_modullisten, list(temp_students), ordering, courses_needed)
             if len(temp_section[1]) < best:
                 best_section = temp_section
                 best = len(temp_section[1])
@@ -515,11 +517,11 @@ def run(connection: object, **kwargs: dict) -> None:
     return (result, leftovers)
 
 
-def generate_section(modullisten, temp_students, modul_ids, **kwargs):
+def generate_section(modullisten, temp_students, modul_ids, count_courses):
     used_courses = {}
     current_section = []
 
-    for i, _ in enumerate(range(kwargs['num_courses'])):
+    for i, _ in enumerate(range(count_courses)):
         picked_index = pick_modul(modullisten[modul_ids[i % 4]], temp_students, used_courses)
         current_section.append((zuteilen(modullisten[modul_ids[i % 4]][picked_index][0], temp_students),
                                 modullisten[modul_ids[i % 4]][picked_index][1]))
