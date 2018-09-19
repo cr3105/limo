@@ -9,6 +9,7 @@ from json                   import loads                                        
 from timeit                 import default_timer            as timer
 from concurrent.futures     import ThreadPoolExecutor
 from itertools              import permutations
+import os
 
 module_commands = ["SELECT StudentID FROM modulwahl WHERE D1 = 1;",
                    "SELECT StudentID FROM modulwahl WHERE D2 = 1;",
@@ -355,6 +356,8 @@ def output_results(result: tuple, connection) -> None:
     test.sort()
     print(f'Unique courses assigned: {test}')
     format_string = ',{},{},{},{},{},\n'
+    if not os.path.exists(f'./RESULTS/') :
+        os.mkdir(f'./RESULTS/')
 
     for i, _ in enumerate(result[0]):
         with open(f'./RESULTS/section{i+1}.txt', 'w') as f:
