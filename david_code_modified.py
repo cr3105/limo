@@ -356,6 +356,7 @@ def output_results(result: tuple, connection) -> None:
     test.sort()
     print(f'Unique courses assigned: {test}')
     format_string = ',{},{},{},{},{},\n'
+
     if not os.path.exists(f'./RESULTS/') :
         os.mkdir(f'./RESULTS/')
 
