@@ -62,7 +62,7 @@ def call_storedproc_in_db(connection: object, procname: str, *args: tuple) -> li
     else:
         try:
             # create a cursor object for this transaction
-            cursor = connection.cursor()
+            cursor = connection.cursor(buffered=True)
 
         except MySQL_Error as e:
             cursor.close()
@@ -82,7 +82,7 @@ def call_storedproc_in_db(connection: object, procname: str, *args: tuple) -> li
 
         try:
             # execute the command
-            cursor.callproc(procname)
+            cursor.callproc(procname, args[0])
             print(cursor.statement)
             
 
@@ -107,7 +107,7 @@ def call_storedproc_in_db(connection: object, procname: str, *args: tuple) -> li
             return None
 
         # create a list of results
-        results = [item for item in cursor.stored_results()]
+        results = [item.fetchall() for item in cursor.stored_results()]
 
         # close the cursor to avoid memory leaks
         cursor.close()
@@ -471,6 +471,9 @@ def run(connection: object, **kwargs: dict) -> None:
     if connection is None:
         print('Invalid connection received! Terminating ...')
         exit(1)
+
+    # stp_args = ('D1')
+    # call_storedproc_in_db(connection, 'get_module_list', stp_args)
 
     leftovers = [[] for i in range(kwargs['num_sections'])]
     result = [[] for i in range(kwargs['num_sections'])]
