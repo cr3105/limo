@@ -267,7 +267,7 @@ def connect_to_db2() -> object:
 
     return connection
 
-def get_modules(connection: object, connection2: object, **kwargs: dict) -> (dict,list):
+def get_modules(connection: object, connection2: object) -> (dict,list):
 
     #load the list of available courses from the database
     global classes_command
@@ -331,7 +331,7 @@ def main() -> None:
     try:
         connection = connect_to_db()
         connection2 = connect_to_db2()
-        kwargs = {'deutsch': 10, 'english': 10, 'franz': 1, 'mathe': 10, 'segels': 8, 'num_sections': 9, 'num_courses': 10}
+        kwargs = {'num_sections': 9, 'num_courses': 10}
         start = timer()
         result = run(connection, connection2, **kwargs)
         end = timer()
@@ -541,7 +541,7 @@ def run(connection: object, connection2: object, **kwargs: dict) -> None:
     leftovers = [[] for i in range(kwargs['num_sections'])]
     result = [[] for i in range(kwargs['num_sections'])]
     student_set = schuelerliste(connection)
-    modullisten, modul_ids = get_modules(connection, connection2, **kwargs)
+    modullisten, modul_ids = get_modules(connection, connection2)
     id_perms = list(permutations(modul_ids, len(modul_ids)))
     # 1 E, D, M pro section
     # all french in one course, repeat once
