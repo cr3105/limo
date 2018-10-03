@@ -79,8 +79,7 @@ def call_storedproc_in_db(connection: object, procname: str, *args: tuple) -> li
 
     return results
 
-
-def execute_db_command(connection: object, command: str, *args: tuple) -> list:
+def execute_db_command(connection: object, command: str, commit: int, *args: tuple) -> list:
     """
     Executes the given MySQL ``command`` on the MySQL server in ``connection``. Arguments may be passed via the tuple
 
@@ -126,7 +125,8 @@ def execute_db_command(connection: object, command: str, *args: tuple) -> list:
             # execute the command
             cursor.execute(command, params=args)
             # commit the mysql transaction
-            #connection.commit()
+            if commit == 1:
+                connection.commit()
 
         except MySQL_Error as e:
             # if an error occurs we need to let MySQL know that the last transaction(s) should be discarded
@@ -149,13 +149,13 @@ def execute_db_command(connection: object, command: str, *args: tuple) -> list:
             return None
 
         # create a list of results
-        results = [item for item in cursor]
+        if commit == 0:
+            results = [item for item in cursor]
 
         # close the cursor to avoid memory leaks
         cursor.close()
 
     return results
-
 
 def modulliste(connection: object, modul_id: str) -> list:
     """
@@ -166,8 +166,7 @@ def modulliste(connection: object, modul_id: str) -> list:
     """
     global module_commands;
 
-    return [id[0] for id in execute_db_command(connection, module_commands[0].format(modul_id))]
-
+    return [id[0] for id in execute_db_command(connection, module_commands[0].format(modul_id), 0)]
 
 def schuelerliste(connection: object) -> list:
     """
@@ -176,7 +175,7 @@ def schuelerliste(connection: object) -> list:
     :return: A list containing the ids of all students.
     """
     query = "SELECT StudentID FROM modulwahl;"
-    return [id[0] for id in execute_db_command(connection, query)]
+    return [id[0] for id in execute_db_command(connection, query, 0)]
 
 def zuteilen(source: set, students: set) -> list:
     """
@@ -267,6 +266,36 @@ def connect_to_db2() -> object:
 
     return connection
 
+def transfer_student_choices(connection: object, connection2: object) -> None:
+    row_names = ['StudentID', \
+                 'D1','D2','D3','D4','D5','D6','D7','D8','D9','D10', \
+                 'E1','E2','E3','E4','E5','E6','E7','E8','E9','E10', \
+                 'M1','M2','M3','M4','M5','M6','M7','M8','M9','M10', \
+                 'F1', \
+                 'S1','S2','S3','S4','S5','S6','S7','S8']
+    query = "SELECT StudentID,D1,D2,D3,D4,D5,D6,D7,D8,D9,D10, \
+                 E1,E2,E3,E4,E5,E6,E7,E8,E9,E10, \
+                 M1,M2,M3,M4,M5,M6,M7,M8,M9,M10, \
+                 F1, \
+                 S1,S2,S3,S4,S5,S6,S7,S8 \
+                 FROM datenbank3b.modulwahl;"
+    old_student_table_w_choices = execute_db_command(connection, query, 0)
+
+    for arow in old_student_table_w_choices:
+        col_count = 40
+        for i in range(1,col_count,1):
+            if arow[i] == 1:
+                TransferChoice(connection2, arow[0], row_names[i])
+
+    return None
+
+def TransferChoice(connection: object, SID: int, choice: str) -> None:
+    update_cmd = "INSERT INTO student_choices (student_id, course_id) VALUES ({0}, {1});"
+    choice_id = course_dict[choice]
+    execute_db_command(connection, update_cmd.format(SID,choice_id), 1)
+
+    return None
+
 def get_modules(connection: object, connection2: object) -> (dict,list):
 
     #load the list of available courses from the database
@@ -274,7 +303,7 @@ def get_modules(connection: object, connection2: object) -> (dict,list):
     global available_courses
     global course_dict
 
-    available_courses = execute_db_command(connection2, classes_command[0])
+    available_courses = execute_db_command(connection2, classes_command[0], 0)
 
     prefixes = []
     laengen = []
@@ -419,7 +448,7 @@ def get_student_info(connection):
 
     query = f'SELECT StudentID, fname, lname, sub_class FROM modulwahl;'
 
-    result = execute_db_command(connection, query)
+    result = execute_db_command(connection, query, 0)
 
     if result:
         ret = {}
@@ -546,6 +575,8 @@ def run(connection: object, connection2: object, **kwargs: dict) -> None:
     # 1 E, D, M pro section
     # all french in one course, repeat once
     french_needed = 2
+
+    #transfer_student_choices(connection, connection2)
 
     result[0], hasFrench = (first_section(modullisten))
     if hasFrench == 1:
