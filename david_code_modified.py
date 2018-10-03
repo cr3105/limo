@@ -267,6 +267,7 @@ def connect_to_db2() -> object:
     return connection
 
 def transfer_student_choices(connection: object, connection2: object) -> None:
+    update_cmd = "INSERT INTO student_choices (student_id, course_id) VALUES ({0}, {1});"
     row_names = ['StudentID', \
                  'D1','D2','D3','D4','D5','D6','D7','D8','D9','D10', \
                  'E1','E2','E3','E4','E5','E6','E7','E8','E9','E10', \
@@ -285,14 +286,20 @@ def transfer_student_choices(connection: object, connection2: object) -> None:
         col_count = 40
         for i in range(1,col_count,1):
             if arow[i] == 1:
-                TransferChoice(connection2, arow[0], row_names[i])
+                choice_id = course_dict[row_names[i]]
+                execute_db_command(connection2, update_cmd.format(arow[0],choice_id), 1)
 
     return None
 
-def TransferChoice(connection: object, SID: int, choice: str) -> None:
-    update_cmd = "INSERT INTO student_choices (student_id, course_id) VALUES ({0}, {1});"
-    choice_id = course_dict[choice]
-    execute_db_command(connection, update_cmd.format(SID,choice_id), 1)
+def transfer_students(connection: object, connection2: object) -> None:
+    update_cmd = "INSERT INTO students (id, fname, lname, class, school_type) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}');"
+
+    query = "SELECT StudentID,fname,lname,class,school_type\
+                 FROM datenbank3b.modulwahl ORDER BY StudentID;"
+    old_student_table = execute_db_command(connection, query, 0)
+
+    for arow in old_student_table:
+        execute_db_command(connection2, update_cmd.format(arow[0],arow[1],arow[2],arow[3],arow[4]), 1)
 
     return None
 
@@ -577,6 +584,7 @@ def run(connection: object, connection2: object, **kwargs: dict) -> None:
     french_needed = 2
 
     #transfer_student_choices(connection, connection2)
+    #transfer_students(connection, connection2)
 
     result[0], hasFrench = (first_section(modullisten))
     if hasFrench == 1:
