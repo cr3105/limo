@@ -11,9 +11,6 @@ from concurrent.futures     import ThreadPoolExecutor
 from itertools              import permutations
 import os
 
-classes_command = ["SELECT * FROM available_courses ORDER BY type;"]
-module_commands = ["SELECT StudentID FROM modulwahl WHERE {0} = 1;"]
-available_courses = []
 course_dict = dict()
 
 def call_storedproc_in_db(connection: object, procname: str, *args: tuple) -> list:
@@ -157,16 +154,16 @@ def execute_db_command(connection: object, command: str, commit: int, *args: tup
 
     return results
 
-def modulliste(connection: object, modul_id: str) -> list:
+def modulliste(connection: object, modul_id: int) -> list:
     """
     Builds the list of all students who selected ``modul_id``.
 
     :param modul_id: The id of the modul to retrieve.
     :return: A list of student ids representing the pool of student's who've chosen this modul.
     """
-    global module_commands;
+    module_commands = "SELECT student_id FROM student_choices WHERE course_id = {0};"
 
-    return [id[0] for id in execute_db_command(connection, module_commands[0].format(modul_id), 0)]
+    return [id[0] for id in execute_db_command(connection, module_commands.format(modul_id), 0)]
 
 def schuelerliste(connection: object) -> list:
     """
@@ -174,7 +171,7 @@ def schuelerliste(connection: object) -> list:
 
     :return: A list containing the ids of all students.
     """
-    query = "SELECT StudentID FROM modulwahl;"
+    query = "SELECT id FROM students;"
     return [id[0] for id in execute_db_command(connection, query, 0)]
 
 def zuteilen(source: set, students: set) -> list:
@@ -231,8 +228,8 @@ def connect_to_db() -> object:
     connection = None
 
     try:
-        if 'limoinput_connection' in environ:
-            config = loads(environ['limoinput_connection'])
+        if 'limoinput_connection_old' in environ:
+            config = loads(environ['limoinput_connection_old'])
             connection = connect(**config)
             print("Verbindung erfolgreich\n")
 
@@ -253,8 +250,8 @@ def connect_to_db2() -> object:
     connection = None
 
     try:
-        if 'limoinput_connection_new' in environ:
-            config = loads(environ['limoinput_connection_new'])
+        if 'limoinput_connection' in environ:
+            config = loads(environ['limoinput_connection'])
             connection = connect(**config)
             print("Verbindung erfolgreich\n")
 
@@ -266,7 +263,13 @@ def connect_to_db2() -> object:
 
     return connection
 
-def transfer_student_choices(connection: object, connection2: object) -> None:
+def transfer_student_choices(connection: object) -> None:
+    #connect to old database
+    connection2 = connect_to_db()
+    if connection2 is None:
+        print('No connection to old database! Terminating ...')
+        exit(1)
+
     update_cmd = "INSERT INTO student_choices (student_id, course_id) VALUES ({0}, {1});"
     row_names = ['StudentID', \
                  'D1','D2','D3','D4','D5','D6','D7','D8','D9','D10', \
@@ -280,37 +283,44 @@ def transfer_student_choices(connection: object, connection2: object) -> None:
                  F1, \
                  S1,S2,S3,S4,S5,S6,S7,S8 \
                  FROM datenbank3b.modulwahl;"
-    old_student_table_w_choices = execute_db_command(connection, query, 0)
+    old_student_table_w_choices = execute_db_command(connection2, query, 0)
 
     for arow in old_student_table_w_choices:
         col_count = 40
         for i in range(1,col_count,1):
             if arow[i] == 1:
                 choice_id = course_dict[row_names[i]]
-                execute_db_command(connection2, update_cmd.format(arow[0],choice_id), 1)
+                execute_db_command(connection, update_cmd.format(arow[0],choice_id), 1)
 
+    connection2.close()
     return None
 
-def transfer_students(connection: object, connection2: object) -> None:
+def transfer_students(connection: object) -> None:
+    #connect to old database
+    connection2 = connect_to_db()
+    if connection2 is None:
+        print('No connection to old database! Terminating ...')
+        exit(1)
+
     update_cmd = "INSERT INTO students (id, fname, lname, class, school_type) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}');"
 
     query = "SELECT StudentID,fname,lname,class,school_type\
                  FROM datenbank3b.modulwahl ORDER BY StudentID;"
-    old_student_table = execute_db_command(connection, query, 0)
+    old_student_table = execute_db_command(connection2, query, 0)
 
     for arow in old_student_table:
-        execute_db_command(connection2, update_cmd.format(arow[0],arow[1],arow[2],arow[3],arow[4]), 1)
+        execute_db_command(connection, update_cmd.format(arow[0],arow[1],arow[2],arow[3],arow[4]), 1)
 
+    connection2.close()
     return None
 
-def get_modules(connection: object, connection2: object) -> (dict,list):
+def get_modules(connection: object) -> (dict,list):
 
     #load the list of available courses from the database
-    global classes_command
-    global available_courses
     global course_dict
+    classes_command = "SELECT * FROM available_courses ORDER BY type;"
 
-    available_courses = execute_db_command(connection2, classes_command[0], 0)
+    available_courses = execute_db_command(connection, classes_command, 0)
 
     prefixes = []
     laengen = []
@@ -348,7 +358,7 @@ def get_modules(connection: object, connection2: object) -> (dict,list):
             modul_ids.append(prefix)
 
             for cur in range(length):  					
-                modullisten[prefix].append((modulliste(connection, '{}{}'.format(prefix, cur + 1)), '{}{}'.format(prefix, cur + 1)))
+                modullisten[prefix].append((modulliste(connection, course_dict['{}{}'.format(prefix, cur + 1)]), '{}{}'.format(prefix, cur + 1)))
         else:
             del modullisten[prefix]
 
@@ -365,22 +375,19 @@ def main() -> None:
     seed()
 
     try:
-        connection = connect_to_db()
-        connection2 = connect_to_db2()
+        connection = connect_to_db2()
         kwargs = {'num_sections': 9, 'num_courses': 10}
         start = timer()
-        result = run(connection, connection2, **kwargs)
+        result = run(connection, **kwargs)
         end = timer()
         output_results(result, connection)
         print(f'time elapsed: {end - start}')
         connection.close()
-        connection2.close()
 
 
     except Exception as e:
         print(f'Something broke ...\n\tReason:{str(e)}')
         connection.close()
-        connection2.close()
         exit(1)
 
     return None
@@ -388,7 +395,8 @@ def main() -> None:
 
 def output_results(result: tuple, connection) -> None:
     unique_classes = {}
-    format_string = ',{},{},{},{},{},\n'
+    format_string  = ',{},{},{},{},{},\n'
+    format_string2 = ',{},{},{},{}{},{},\n'
 
     student_info = get_student_info(connection)
 
@@ -428,8 +436,10 @@ def output_results(result: tuple, connection) -> None:
             for modul in result[0][i]:
                 for student_id in modul[0]:
                     if str(student_id) in student_info: 
-                        f.write(format_string.format(student_id, student_info[str(student_id)][0], 
-                                                        student_info[str(student_id)][1], student_info[str(student_id)][2], modul[1]))
+                        f.write(format_string2.format(student_id, student_info[str(student_id)][1], 
+                                                        student_info[str(student_id)][0], 
+                                                        student_info[str(student_id)][2], 
+                                                        student_info[str(student_id)][3], modul[1]))
                     else:
                         f.write(format_string.format(student_id, 'Information', 'Not', 'Available', modul[1]))
                 f.write('Anzahl Schueler: {},\n'.format(len(modul[0])))
@@ -439,8 +449,10 @@ def output_results(result: tuple, connection) -> None:
             f.write(format_string.format('', '', '', '', ''))
 
             for student_id in result[1][i]:
-                f.write(format_string.format(student_id, student_info[str(student_id)][0], 
-                                                    student_info[str(student_id)][1], student_info[str(student_id)][2], 'unassigned'))
+                f.write(format_string2.format(student_id, student_info[str(student_id)][1], 
+                                                    student_info[str(student_id)][0], 
+                                                    student_info[str(student_id)][2],
+                                                    student_info[str(student_id)][3],'unassigned'))
             f.write('Anzahl Schueler: {},\n'.format(len(result[1][i])))
             f.close()
 
@@ -453,14 +465,15 @@ def output_results(result: tuple, connection) -> None:
 
 def get_student_info(connection):
 
-    query = f'SELECT StudentID, fname, lname, sub_class FROM modulwahl;'
+    query = f'SELECT students.id, students.fname, students.lname, classes.grade, classes.class FROM students \
+              INNER JOIN classes ON students.class = classes.id;'
 
     result = execute_db_command(connection, query, 0)
 
     if result:
         ret = {}
         for student in result:
-            ret[str(student[0])] = (student[1], student[2], student[3])
+            ret[str(student[0])] = (student[1], student[2], student[3], student[4])
 
         return ret
     else:
@@ -478,13 +491,13 @@ def remove_set_difference(list1, list2) -> None:
     return None
 
 
-def pick_modul(modulliste, students, used_courses) -> int: 
+def pick_modul(modul_liste, students, used_courses) -> int: 
     found_index = -1
     max_found = -1
 
-    modulliste.sort()
+    modul_liste.sort()
     
-    for i, l in enumerate(modulliste):
+    for i, l in enumerate(modul_liste):
         counter = 0
 
         if l[1] in used_courses:
@@ -553,7 +566,7 @@ def second_section(modullisten) -> (list, int):
 
     return (secondS, hasFrench)
 
-def run(connection: object, connection2: object, **kwargs: dict) -> None:
+def run(connection: object, **kwargs: dict) -> None:
     """
     Program main thread for building the section lists and sending them to the database for permanent storage
 
@@ -566,10 +579,6 @@ def run(connection: object, connection2: object, **kwargs: dict) -> None:
         print('Invalid connection received! Terminating ...')
         exit(1)
 
-    if connection2 is None:
-        print('Invalid connection2 received! Terminating ...')
-        exit(1)
-
 
     # stp_args = ('D1')
     # call_storedproc_in_db(connection, 'get_module_list', stp_args)
@@ -577,14 +586,14 @@ def run(connection: object, connection2: object, **kwargs: dict) -> None:
     leftovers = [[] for i in range(kwargs['num_sections'])]
     result = [[] for i in range(kwargs['num_sections'])]
     student_set = schuelerliste(connection)
-    modullisten, modul_ids = get_modules(connection, connection2)
+    modullisten, modul_ids = get_modules(connection)
     id_perms = list(permutations(modul_ids, len(modul_ids)))
     # 1 E, D, M pro section
     # all french in one course, repeat once
     french_needed = 2
 
-    #transfer_student_choices(connection, connection2)
-    #transfer_students(connection, connection2)
+    #transfer_student_choices(connection)
+    #transfer_students(connection)
 
     result[0], hasFrench = (first_section(modullisten))
     if hasFrench == 1:
@@ -603,7 +612,7 @@ def run(connection: object, connection2: object, **kwargs: dict) -> None:
         temp_students = set(student_set)
         
         if french_needed:
-            french_class = modulliste(connection, 'F1')
+            french_class = modulliste(connection, course_dict['F1'])
             current_section.append((french_class, 'F1'))
             remove_set_difference(temp_students, french_class)
             french_needed -= 1
