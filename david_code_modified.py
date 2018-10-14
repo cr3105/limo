@@ -376,7 +376,7 @@ def main() -> None:
 
     try:
         connection = connect_to_db2()
-        kwargs = {'num_sections': 9, 'num_courses': 10}
+        kwargs = {'num_sections': 3, 'num_courses': 10}
         start = timer()
         result = run(connection, **kwargs)
         end = timer()
@@ -455,6 +455,20 @@ def output_results(result: tuple, connection) -> None:
                                                     student_info[str(student_id)][3],'unassigned'))
             f.write('Anzahl Schueler: {},\n'.format(len(result[1][i])))
             f.close()
+
+        # database output_results
+        update_cmd = "INSERT INTO course_assignments (section_date, section, class_id, student_id, isLocked) \
+                      VALUES ('{0}', '{1}', '{2}', '{3}', '{4}');"
+
+        if i == 0 or i == 1:
+            isLocked = 1
+        else:
+            isLocked = 0
+
+        for modul in result[0][i]:
+            class_id = course_dict[modul[1]] 
+            for student_id in modul[0]:
+                execute_db_command(connection, update_cmd.format(2018,i+1,class_id,student_id,isLocked), 1)
 
     test = list(unique_classes)
     test.sort()
