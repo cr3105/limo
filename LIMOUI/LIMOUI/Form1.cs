@@ -26,7 +26,9 @@ namespace LIMOUI
         Dictionary<string, int> classesDict = new Dictionary<string, int>();
         Dictionary<string, int> schoolTypesDict = new Dictionary<string, int>();
         CheckBox[] studentChoicesCheckBoxes;
+        RadioButton[] assignedCoursesSelector;
         int studentInfoValidationErrors;
+        int moduleSelectionValidationErrors;
         bool studentInfoChanged;
 
         public Form1()
@@ -35,6 +37,19 @@ namespace LIMOUI
             toolStripStatusLabel1.Text = "";
             StudentInfoValidationErrors = 0;
             StudentInfoChanged = false;
+            ModuleSelectionValidationErrors = 0;
+            AssignedCoursesSelector = new RadioButton[11];
+            AssignedCoursesSelector[0] = courseSelector01;
+            AssignedCoursesSelector[1] = courseSelector02;
+            AssignedCoursesSelector[2] = courseSelector03;
+            AssignedCoursesSelector[3] = courseSelector04;
+            AssignedCoursesSelector[4] = courseSelector05;
+            AssignedCoursesSelector[5] = courseSelector06;
+            AssignedCoursesSelector[6] = courseSelector07;
+            AssignedCoursesSelector[7] = courseSelector08;
+            AssignedCoursesSelector[8] = courseSelector09;
+            AssignedCoursesSelector[9] = courseSelector10;
+            AssignedCoursesSelector[10] = courseSelector11;
         }
 
         public string ConnStr { get => connStr; set => connStr = value; }
@@ -48,6 +63,8 @@ namespace LIMOUI
         public Dictionary<string, int> ClassesDict { get => classesDict; set => classesDict = value; }
         public int StudentInfoValidationErrors { get => studentInfoValidationErrors; set => studentInfoValidationErrors = value; }
         public bool StudentInfoChanged { get => studentInfoChanged; set => studentInfoChanged = value; }
+        public int ModuleSelectionValidationErrors { get => moduleSelectionValidationErrors; set => moduleSelectionValidationErrors = value; }
+        public RadioButton[] AssignedCoursesSelector { get => assignedCoursesSelector; set => assignedCoursesSelector = value; }
 
         private void NextBtn_Click(object sender, EventArgs e)
         {
@@ -608,6 +625,199 @@ namespace LIMOUI
             }
         }
 
+        private void SectionDateTxtBx_Validated(object sender, EventArgs e)
+        {
+            ((TextBox)sender).ForeColor = SystemColors.WindowText;
+            toolStripStatusLabel1.Text = "";
+            ((TextBox)sender).Tag = 0;
+            if (ModuleSelectionValidationErrors > 0)
+            {
+                ModuleSelectionValidationErrors -= 1;
+            }
+            if (ModuleSelectionValidationErrors == 0)
+            {
+                refreshBtn.Enabled = true;
+            }
+        }
+
+        private void SectionDateTxtBx_Validating(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                int year = Convert.ToInt32(((TextBox)sender).Text);
+                if((year > 2022) || (year < 2018))
+                {
+                    e.Cancel = true;
+                }
+            }
+            catch (ArgumentNullException)
+            {
+                e.Cancel = true;
+            }
+            catch (FormatException)
+            {
+                e.Cancel = true;
+            }
+            catch (OverflowException)
+            {
+                e.Cancel = true;
+            }
+            finally
+            {
+                if (e.Cancel == true)
+                {
+                    toolStripStatusLabel1.Text = "Please enter a valid four digit year";
+                    ((TextBox)sender).Select(0, ((TextBox)sender).Text.Length);
+                    if (Convert.ToInt32(((TextBox)sender).Tag) == 0)
+                    {
+                        ((TextBox)sender).Tag = 1;
+                        ModuleSelectionValidationErrors += 1;
+                        refreshBtn.Enabled = false;
+                        ((TextBox)sender).ForeColor = Color.DarkRed;
+                    }
+                }
+            }
+        }
+
+        private void SectionTxtBx_Validating(object sender, CancelEventArgs e)
+        {
+            try
+            {
+                int section = Convert.ToInt32(((TextBox)sender).Text);
+                if ((section > 10) || (section < 1))
+                {
+                    e.Cancel = true;
+                }
+            }
+            catch (ArgumentNullException)
+            {
+                e.Cancel = true;
+            }
+            catch (FormatException)
+            {
+                e.Cancel = true;
+            }
+            catch (OverflowException)
+            {
+                e.Cancel = true;
+            }
+            finally
+            {
+                if (e.Cancel == true)
+                {
+                    toolStripStatusLabel1.Text = "Please enter a valid value: 0 < module no <= 10";
+                    ((TextBox)sender).Select(0, ((TextBox)sender).Text.Length);
+                    if (Convert.ToInt32(((TextBox)sender).Tag) == 0)
+                    {
+                        ((TextBox)sender).Tag = 1;
+                        ModuleSelectionValidationErrors += 1;
+                        refreshBtn.Enabled = false;
+                        ((TextBox)sender).ForeColor = Color.DarkRed;
+                    }
+                }
+            }
+        }
+
+        private void RefreshBtn_Click(object sender, EventArgs e)
+        {
+            refreshBtn.Enabled = false;
+            refreshBtn.Refresh();
+
+            int nYear = Convert.ToInt32(sectionDateTxtBx.Text);
+            int nModule = Convert.ToInt32(sectionTxtBx.Text);
+            int i = 0;
+
+            foreach (RadioButton rb in AssignedCoursesSelector)
+            {
+                rb.Visible = false;
+            }
+
+            foreach (KeyValuePair<string, int> kvp in CourseDict)
+            {
+                if (true == TestClassidInAssignments(nYear, nModule, kvp.Value))
+                {
+                    AssignedCoursesSelector[i].Text = kvp.Key;
+                    AssignedCoursesSelector[i].Visible = true;
+                    i += 1;
+                }
+            }
+
+            AssignedCoursesSelector[0].Checked = true;
+            GetAssignedModule(nYear, nModule, CourseDict[AssignedCoursesSelector[0].Text]);
+
+        }
+
+        private void GetAssignedModule(int nYear, int nModule, int nClassId)
+        {
+            try
+            {
+                LimoServer.Open();
+
+                string query =
+                    "SELECT course_assignments.student_id, students.fname, students.lname, classes.grade, classes.class " +
+                    "FROM course_assignments " +
+                    "INNER JOIN classes ON students.class = classes.id " +
+                    "INNER JOIN students ON course_assignments.student_id = students.id " +
+                    "WHERE section_date = '{0}' AND section = '{1}' AND class_id = '{2}';";
+
+                MySqlDataAdapter daAssignments = new MySqlDataAdapter(query, LimoServer);
+                DataSet dsTemp = new DataSet();
+
+                daAssignments.Fill(dsTemp, "course_assignments");
+                asignedCoursesView.DataSource = dsTemp;
+                asignedCoursesView.DataMember = "course_assignments";
+
+                asignedCoursesView.Columns[0].HeaderText = "ID";
+                asignedCoursesView.Columns[1].HeaderText = "Name";
+                asignedCoursesView.Columns[2].HeaderText = "Nachname";
+                asignedCoursesView.Columns[3].HeaderText = "Stufe";
+                asignedCoursesView.Columns[4].HeaderText = "Klasse";
+
+                asignedCoursesView.Visible = true;
+            }
+            catch (Exception ex)
+            {
+                toolStripStatusLabel1.Text = ex.Message;
+            }
+            finally
+            {
+                LimoServer.Close();
+            }
+        }
+
+        private bool TestClassidInAssignments(int nYear, int nModule, int nClassId)
+        {
+            bool bClassIsAssigned = false;
+            try
+            {
+                MySqlCommand cmd = new MySqlCommand
+                {
+                    Connection = LimoServer
+                };
+
+                LimoServer.Open();
+                cmd.CommandText = string.Format("SELECT COUNT(*) FROM course_assignments " +
+                    "WHERE section_date = '{0}' AND section = '{1}' AND class_id = '{2}';",
+                    nYear, nModule, nClassId);
+                object result = cmd.ExecuteScalar();
+                if ((result != null) && (Convert.ToInt32(result) > 0))
+                {
+                    bClassIsAssigned = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                toolStripStatusLabel1.Text = ex.Message;
+                bClassIsAssigned = false;
+            }
+            finally
+            {
+                LimoServer.Close();
+            }
+
+            return bClassIsAssigned;
+        }
+
         private void UpdateStudent(int nStudentId, string sFname, string sLname, int nClass, int nSchoolType)
         {
             try
@@ -758,7 +968,8 @@ namespace LIMOUI
 
         private void Form1_Shown(object sender, EventArgs e)
         {
-            ConnStr = "server=cdr-wa.dyndns.org;port=3105;database=david_db;user=david;password=51Jti0IeQn";
+            //ConnStr = "server=cdr-wa.dyndns.org;port=3105;database=david_db;user=david;password=51Jti0IeQn";
+            ConnStr = "server=localhost;port=3306;database=david_db;user=cr3105;password=David#3105";
             LimoServer = new MySqlConnection(ConnStr);
 
             GetStudents();

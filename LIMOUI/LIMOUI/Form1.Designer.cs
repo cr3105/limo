@@ -71,7 +71,24 @@
             this.label12 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
             this.Modules = new System.Windows.Forms.TabPage();
-            this.dataGridView2 = new System.Windows.Forms.DataGridView();
+            this.refreshBtn = new System.Windows.Forms.Button();
+            this.sectionTxtBx = new System.Windows.Forms.TextBox();
+            this.label34 = new System.Windows.Forms.Label();
+            this.sectionDateTxtBx = new System.Windows.Forms.TextBox();
+            this.label33 = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.courseSelector11 = new System.Windows.Forms.RadioButton();
+            this.courseSelector10 = new System.Windows.Forms.RadioButton();
+            this.courseSelector09 = new System.Windows.Forms.RadioButton();
+            this.courseSelector08 = new System.Windows.Forms.RadioButton();
+            this.courseSelector07 = new System.Windows.Forms.RadioButton();
+            this.courseSelector06 = new System.Windows.Forms.RadioButton();
+            this.courseSelector05 = new System.Windows.Forms.RadioButton();
+            this.courseSelector03 = new System.Windows.Forms.RadioButton();
+            this.courseSelector04 = new System.Windows.Forms.RadioButton();
+            this.courseSelector02 = new System.Windows.Forms.RadioButton();
+            this.courseSelector01 = new System.Windows.Forms.RadioButton();
+            this.asignedCoursesView = new System.Windows.Forms.DataGridView();
             this.About = new System.Windows.Forms.TabPage();
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
@@ -91,7 +108,8 @@
             this.Modify.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.Modules.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
+            this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.asignedCoursesView)).BeginInit();
             this.About.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -581,7 +599,13 @@
             // 
             // Modules
             // 
-            this.Modules.Controls.Add(this.dataGridView2);
+            this.Modules.Controls.Add(this.refreshBtn);
+            this.Modules.Controls.Add(this.sectionTxtBx);
+            this.Modules.Controls.Add(this.label34);
+            this.Modules.Controls.Add(this.sectionDateTxtBx);
+            this.Modules.Controls.Add(this.label33);
+            this.Modules.Controls.Add(this.panel1);
+            this.Modules.Controls.Add(this.asignedCoursesView);
             this.Modules.Location = new System.Drawing.Point(4, 25);
             this.Modules.Name = "Modules";
             this.Modules.Size = new System.Drawing.Size(768, 384);
@@ -589,13 +613,215 @@
             this.Modules.Text = "Module";
             this.Modules.UseVisualStyleBackColor = true;
             // 
-            // dataGridView2
+            // refreshBtn
             // 
-            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView2.Location = new System.Drawing.Point(3, 3);
-            this.dataGridView2.Name = "dataGridView2";
-            this.dataGridView2.Size = new System.Drawing.Size(501, 378);
-            this.dataGridView2.TabIndex = 0;
+            this.refreshBtn.Enabled = false;
+            this.refreshBtn.Location = new System.Drawing.Point(576, 140);
+            this.refreshBtn.Name = "refreshBtn";
+            this.refreshBtn.Size = new System.Drawing.Size(162, 23);
+            this.refreshBtn.TabIndex = 16;
+            this.refreshBtn.Text = "Refresh";
+            this.refreshBtn.UseVisualStyleBackColor = true;
+            this.refreshBtn.Click += new System.EventHandler(this.RefreshBtn_Click);
+            // 
+            // sectionTxtBx
+            // 
+            this.sectionTxtBx.Location = new System.Drawing.Point(576, 97);
+            this.sectionTxtBx.Name = "sectionTxtBx";
+            this.sectionTxtBx.Size = new System.Drawing.Size(162, 20);
+            this.sectionTxtBx.TabIndex = 12;
+            this.sectionTxtBx.Tag = "0";
+            this.sectionTxtBx.Validating += new System.ComponentModel.CancelEventHandler(this.SectionTxtBx_Validating);
+            this.sectionTxtBx.Validated += new System.EventHandler(this.SectionDateTxtBx_Validated);
+            // 
+            // label34
+            // 
+            this.label34.AutoSize = true;
+            this.label34.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label34.Location = new System.Drawing.Point(573, 81);
+            this.label34.Name = "label34";
+            this.label34.Size = new System.Drawing.Size(41, 13);
+            this.label34.TabIndex = 11;
+            this.label34.Text = "Modul";
+            // 
+            // sectionDateTxtBx
+            // 
+            this.sectionDateTxtBx.Location = new System.Drawing.Point(576, 44);
+            this.sectionDateTxtBx.Name = "sectionDateTxtBx";
+            this.sectionDateTxtBx.Size = new System.Drawing.Size(162, 20);
+            this.sectionDateTxtBx.TabIndex = 10;
+            this.sectionDateTxtBx.Tag = "0";
+            this.sectionDateTxtBx.Validating += new System.ComponentModel.CancelEventHandler(this.SectionDateTxtBx_Validating);
+            this.sectionDateTxtBx.Validated += new System.EventHandler(this.SectionDateTxtBx_Validated);
+            // 
+            // label33
+            // 
+            this.label33.AutoSize = true;
+            this.label33.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label33.Location = new System.Drawing.Point(573, 28);
+            this.label33.Name = "label33";
+            this.label33.Size = new System.Drawing.Size(31, 13);
+            this.label33.TabIndex = 9;
+            this.label33.Text = "Jahr";
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.courseSelector11);
+            this.panel1.Controls.Add(this.courseSelector10);
+            this.panel1.Controls.Add(this.courseSelector09);
+            this.panel1.Controls.Add(this.courseSelector08);
+            this.panel1.Controls.Add(this.courseSelector07);
+            this.panel1.Controls.Add(this.courseSelector06);
+            this.panel1.Controls.Add(this.courseSelector05);
+            this.panel1.Controls.Add(this.courseSelector03);
+            this.panel1.Controls.Add(this.courseSelector04);
+            this.panel1.Controls.Add(this.courseSelector02);
+            this.panel1.Controls.Add(this.courseSelector01);
+            this.panel1.Location = new System.Drawing.Point(3, 3);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(548, 29);
+            this.panel1.TabIndex = 2;
+            // 
+            // courseSelector11
+            // 
+            this.courseSelector11.Appearance = System.Windows.Forms.Appearance.Button;
+            this.courseSelector11.AutoSize = true;
+            this.courseSelector11.Location = new System.Drawing.Point(373, 3);
+            this.courseSelector11.Name = "courseSelector11";
+            this.courseSelector11.Size = new System.Drawing.Size(37, 23);
+            this.courseSelector11.TabIndex = 12;
+            this.courseSelector11.Text = "D10";
+            this.courseSelector11.UseVisualStyleBackColor = true;
+            this.courseSelector11.Visible = false;
+            // 
+            // courseSelector10
+            // 
+            this.courseSelector10.Appearance = System.Windows.Forms.Appearance.Button;
+            this.courseSelector10.AutoSize = true;
+            this.courseSelector10.Location = new System.Drawing.Point(336, 3);
+            this.courseSelector10.Name = "courseSelector10";
+            this.courseSelector10.Size = new System.Drawing.Size(37, 23);
+            this.courseSelector10.TabIndex = 11;
+            this.courseSelector10.Text = "D10";
+            this.courseSelector10.UseVisualStyleBackColor = true;
+            this.courseSelector10.Visible = false;
+            // 
+            // courseSelector09
+            // 
+            this.courseSelector09.Appearance = System.Windows.Forms.Appearance.Button;
+            this.courseSelector09.AutoSize = true;
+            this.courseSelector09.Location = new System.Drawing.Point(299, 3);
+            this.courseSelector09.Name = "courseSelector09";
+            this.courseSelector09.Size = new System.Drawing.Size(37, 23);
+            this.courseSelector09.TabIndex = 10;
+            this.courseSelector09.Text = "D10";
+            this.courseSelector09.UseVisualStyleBackColor = true;
+            this.courseSelector09.Visible = false;
+            // 
+            // courseSelector08
+            // 
+            this.courseSelector08.Appearance = System.Windows.Forms.Appearance.Button;
+            this.courseSelector08.AutoSize = true;
+            this.courseSelector08.Location = new System.Drawing.Point(262, 3);
+            this.courseSelector08.Name = "courseSelector08";
+            this.courseSelector08.Size = new System.Drawing.Size(37, 23);
+            this.courseSelector08.TabIndex = 9;
+            this.courseSelector08.Text = "D10";
+            this.courseSelector08.UseVisualStyleBackColor = true;
+            this.courseSelector08.Visible = false;
+            // 
+            // courseSelector07
+            // 
+            this.courseSelector07.Appearance = System.Windows.Forms.Appearance.Button;
+            this.courseSelector07.AutoSize = true;
+            this.courseSelector07.Location = new System.Drawing.Point(225, 3);
+            this.courseSelector07.Name = "courseSelector07";
+            this.courseSelector07.Size = new System.Drawing.Size(37, 23);
+            this.courseSelector07.TabIndex = 8;
+            this.courseSelector07.Text = "D10";
+            this.courseSelector07.UseVisualStyleBackColor = true;
+            this.courseSelector07.Visible = false;
+            // 
+            // courseSelector06
+            // 
+            this.courseSelector06.Appearance = System.Windows.Forms.Appearance.Button;
+            this.courseSelector06.AutoSize = true;
+            this.courseSelector06.Location = new System.Drawing.Point(188, 3);
+            this.courseSelector06.Name = "courseSelector06";
+            this.courseSelector06.Size = new System.Drawing.Size(37, 23);
+            this.courseSelector06.TabIndex = 7;
+            this.courseSelector06.Text = "D10";
+            this.courseSelector06.UseVisualStyleBackColor = true;
+            this.courseSelector06.Visible = false;
+            // 
+            // courseSelector05
+            // 
+            this.courseSelector05.Appearance = System.Windows.Forms.Appearance.Button;
+            this.courseSelector05.AutoSize = true;
+            this.courseSelector05.Location = new System.Drawing.Point(151, 3);
+            this.courseSelector05.Name = "courseSelector05";
+            this.courseSelector05.Size = new System.Drawing.Size(37, 23);
+            this.courseSelector05.TabIndex = 6;
+            this.courseSelector05.Text = "D10";
+            this.courseSelector05.UseVisualStyleBackColor = true;
+            this.courseSelector05.Visible = false;
+            // 
+            // courseSelector03
+            // 
+            this.courseSelector03.Appearance = System.Windows.Forms.Appearance.Button;
+            this.courseSelector03.AutoSize = true;
+            this.courseSelector03.Location = new System.Drawing.Point(77, 3);
+            this.courseSelector03.Name = "courseSelector03";
+            this.courseSelector03.Size = new System.Drawing.Size(37, 23);
+            this.courseSelector03.TabIndex = 5;
+            this.courseSelector03.Text = "D10";
+            this.courseSelector03.UseVisualStyleBackColor = true;
+            this.courseSelector03.Visible = false;
+            // 
+            // courseSelector04
+            // 
+            this.courseSelector04.Appearance = System.Windows.Forms.Appearance.Button;
+            this.courseSelector04.AutoSize = true;
+            this.courseSelector04.Location = new System.Drawing.Point(114, 3);
+            this.courseSelector04.Name = "courseSelector04";
+            this.courseSelector04.Size = new System.Drawing.Size(37, 23);
+            this.courseSelector04.TabIndex = 4;
+            this.courseSelector04.Text = "D10";
+            this.courseSelector04.UseVisualStyleBackColor = true;
+            this.courseSelector04.Visible = false;
+            // 
+            // courseSelector02
+            // 
+            this.courseSelector02.Appearance = System.Windows.Forms.Appearance.Button;
+            this.courseSelector02.AutoSize = true;
+            this.courseSelector02.Location = new System.Drawing.Point(40, 3);
+            this.courseSelector02.Name = "courseSelector02";
+            this.courseSelector02.Size = new System.Drawing.Size(37, 23);
+            this.courseSelector02.TabIndex = 3;
+            this.courseSelector02.Text = "D10";
+            this.courseSelector02.UseVisualStyleBackColor = true;
+            this.courseSelector02.Visible = false;
+            // 
+            // courseSelector01
+            // 
+            this.courseSelector01.Appearance = System.Windows.Forms.Appearance.Button;
+            this.courseSelector01.AutoSize = true;
+            this.courseSelector01.Location = new System.Drawing.Point(3, 3);
+            this.courseSelector01.Name = "courseSelector01";
+            this.courseSelector01.Size = new System.Drawing.Size(37, 23);
+            this.courseSelector01.TabIndex = 2;
+            this.courseSelector01.Text = "D10";
+            this.courseSelector01.UseVisualStyleBackColor = true;
+            this.courseSelector01.Visible = false;
+            // 
+            // asignedCoursesView
+            // 
+            this.asignedCoursesView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.asignedCoursesView.Location = new System.Drawing.Point(6, 35);
+            this.asignedCoursesView.Name = "asignedCoursesView";
+            this.asignedCoursesView.Size = new System.Drawing.Size(545, 346);
+            this.asignedCoursesView.TabIndex = 0;
+            this.asignedCoursesView.Visible = false;
             // 
             // About
             // 
@@ -752,7 +978,10 @@
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.Modules.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
+            this.Modules.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.asignedCoursesView)).EndInit();
             this.About.ResumeLayout(false);
             this.About.PerformLayout();
             this.statusStrip1.ResumeLayout(false);
@@ -770,7 +999,7 @@
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.TabPage Modules;
-        private System.Windows.Forms.DataGridView dataGridView2;
+        private System.Windows.Forms.DataGridView asignedCoursesView;
         private System.Windows.Forms.TabPage About;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
@@ -820,6 +1049,23 @@
         private System.Windows.Forms.Label label23;
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.Button saveBtn;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.RadioButton courseSelector02;
+        private System.Windows.Forms.RadioButton courseSelector01;
+        private System.Windows.Forms.RadioButton courseSelector11;
+        private System.Windows.Forms.RadioButton courseSelector10;
+        private System.Windows.Forms.RadioButton courseSelector09;
+        private System.Windows.Forms.RadioButton courseSelector08;
+        private System.Windows.Forms.RadioButton courseSelector07;
+        private System.Windows.Forms.RadioButton courseSelector06;
+        private System.Windows.Forms.RadioButton courseSelector05;
+        private System.Windows.Forms.RadioButton courseSelector03;
+        private System.Windows.Forms.RadioButton courseSelector04;
+        private System.Windows.Forms.Button refreshBtn;
+        private System.Windows.Forms.TextBox sectionTxtBx;
+        private System.Windows.Forms.Label label34;
+        private System.Windows.Forms.TextBox sectionDateTxtBx;
+        private System.Windows.Forms.Label label33;
     }
 }
 
