@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 using MySql.Data;
 using MySql.Data.MySqlClient;
@@ -28,16 +29,17 @@ namespace LIMOUI
         CheckBox[] studentChoicesCheckBoxes;
         RadioButton[] assignedCoursesSelector;
         int studentInfoValidationErrors;
-        int moduleSelectionValidationErrors;
         bool studentInfoChanged;
+        Dictionary<string, string> connectionString = new Dictionary<string, string>();
+        string limoInputConnection;
 
         public Form1()
         {
             InitializeComponent();
             toolStripStatusLabel1.Text = "";
+
             StudentInfoValidationErrors = 0;
             StudentInfoChanged = false;
-            ModuleSelectionValidationErrors = 0;
             AssignedCoursesSelector = new RadioButton[11];
             AssignedCoursesSelector[0] = courseSelector01;
             AssignedCoursesSelector[1] = courseSelector02;
@@ -63,8 +65,9 @@ namespace LIMOUI
         public Dictionary<string, int> ClassesDict { get => classesDict; set => classesDict = value; }
         public int StudentInfoValidationErrors { get => studentInfoValidationErrors; set => studentInfoValidationErrors = value; }
         public bool StudentInfoChanged { get => studentInfoChanged; set => studentInfoChanged = value; }
-        public int ModuleSelectionValidationErrors { get => moduleSelectionValidationErrors; set => moduleSelectionValidationErrors = value; }
         public RadioButton[] AssignedCoursesSelector { get => assignedCoursesSelector; set => assignedCoursesSelector = value; }
+        public string LimoInputConnection { get => limoInputConnection; set => limoInputConnection = value; }
+        public Dictionary<string, string> ConnectionString { get => connectionString; set => connectionString = value; }
 
         private void NextBtn_Click(object sender, EventArgs e)
         {
@@ -73,16 +76,16 @@ namespace LIMOUI
             //         number of data rows is studentTableView.Rows.Count - 1
             //         first data row is studentTableView.Rows[0]
             //         last data row is studentTableView.Rows[studentTableView.Rows.Count - 2]
-            studentTableView.Rows[currentStudentTableIndex].Selected = false;
+            studentTableView.Rows[CurrentStudentTableIndex].Selected = false;
             ClearStudentChoices();
-            currentStudentTableIndex += 1;
-            if(currentStudentTableIndex >= (studentTableView.Rows.Count - 1))
+            CurrentStudentTableIndex += 1;
+            if(CurrentStudentTableIndex >= (studentTableView.Rows.Count - 1))
             {
-                currentStudentTableIndex = 0;
+                CurrentStudentTableIndex = 0;
             }
-            studentTableView.Rows[currentStudentTableIndex].Selected = true;
-            GetCurrentStudent(currentStudentTableIndex);
-            GetStudentChoices((int)studentTableView.Rows[currentStudentTableIndex].Cells[0].Value);
+            studentTableView.Rows[CurrentStudentTableIndex].Selected = true;
+            GetCurrentStudent(CurrentStudentTableIndex);
+            GetStudentChoices((int)studentTableView.Rows[CurrentStudentTableIndex].Cells[0].Value);
         }
 
         private void PrevBtn_Click(object sender, EventArgs e)
@@ -92,16 +95,16 @@ namespace LIMOUI
             //         number of data rows is studentTableView.Rows.Count - 1
             //         first data row is studentTableView.Rows[0]
             //         last data row is studentTableView.Rows[studentTableView.Rows.Count - 2]
-            studentTableView.Rows[currentStudentTableIndex].Selected = false;
+            studentTableView.Rows[CurrentStudentTableIndex].Selected = false;
             ClearStudentChoices();
-            currentStudentTableIndex -= 1;
-            if (currentStudentTableIndex < 0)
+            CurrentStudentTableIndex -= 1;
+            if (CurrentStudentTableIndex < 0)
             {
-                currentStudentTableIndex = studentTableView.Rows.Count - 2;
+                CurrentStudentTableIndex = studentTableView.Rows.Count - 2;
             }
-            studentTableView.Rows[currentStudentTableIndex].Selected = true;
-            GetCurrentStudent(currentStudentTableIndex);
-            GetStudentChoices((int)studentTableView.Rows[currentStudentTableIndex].Cells[0].Value);
+            studentTableView.Rows[CurrentStudentTableIndex].Selected = true;
+            GetCurrentStudent(CurrentStudentTableIndex);
+            GetStudentChoices((int)studentTableView.Rows[CurrentStudentTableIndex].Cells[0].Value);
         }
 
         private void GetStudentChoices(int nStudentId)
@@ -388,7 +391,7 @@ namespace LIMOUI
                             arow.Selected = true;
                             ClearStudentChoices();
                             GetStudentChoices(nSelectedStudent);
-                            currentStudentTableIndex = arow.Index;
+                            CurrentStudentTableIndex = arow.Index;
                             textBox1.Text = nSelectedStudent.ToString();
                             break;
                         }
@@ -407,7 +410,7 @@ namespace LIMOUI
 
         private void DeleteStudentBtn_Click(object sender, EventArgs e)
         {
-            int nStudentId = (int)studentTableView.Rows[currentStudentTableIndex].Cells[0].Value;
+            int nStudentId = (int)studentTableView.Rows[CurrentStudentTableIndex].Cells[0].Value;
             try
             {
                 string query = String.Format("DELETE FROM students WHERE (id = '{0}');", nStudentId);
@@ -625,22 +628,13 @@ namespace LIMOUI
             }
         }
 
-        private void SectionDateTxtBx_Validated(object sender, EventArgs e)
+        private void TrackDateTxtBx_Validated(object sender, EventArgs e)
         {
             ((TextBox)sender).ForeColor = SystemColors.WindowText;
             toolStripStatusLabel1.Text = "";
-            ((TextBox)sender).Tag = 0;
-            if (ModuleSelectionValidationErrors > 0)
-            {
-                ModuleSelectionValidationErrors -= 1;
-            }
-            if (ModuleSelectionValidationErrors == 0)
-            {
-                refreshBtn.Enabled = true;
-            }
         }
 
-        private void SectionDateTxtBx_Validating(object sender, CancelEventArgs e)
+        private void TrackDateTxtBx_Validating(object sender, CancelEventArgs e)
         {
             try
             {
@@ -668,18 +662,12 @@ namespace LIMOUI
                 {
                     toolStripStatusLabel1.Text = "Please enter a valid four digit year";
                     ((TextBox)sender).Select(0, ((TextBox)sender).Text.Length);
-                    if (Convert.ToInt32(((TextBox)sender).Tag) == 0)
-                    {
-                        ((TextBox)sender).Tag = 1;
-                        ModuleSelectionValidationErrors += 1;
-                        refreshBtn.Enabled = false;
-                        ((TextBox)sender).ForeColor = Color.DarkRed;
-                    }
+                    ((TextBox)sender).ForeColor = Color.DarkRed;
                 }
             }
         }
 
-        private void SectionTxtBx_Validating(object sender, CancelEventArgs e)
+        private void TrackTxtBx_Validating(object sender, CancelEventArgs e)
         {
             try
             {
@@ -707,73 +695,116 @@ namespace LIMOUI
                 {
                     toolStripStatusLabel1.Text = "Please enter a valid value: 0 < module no <= 10";
                     ((TextBox)sender).Select(0, ((TextBox)sender).Text.Length);
-                    if (Convert.ToInt32(((TextBox)sender).Tag) == 0)
-                    {
-                        ((TextBox)sender).Tag = 1;
-                        ModuleSelectionValidationErrors += 1;
-                        refreshBtn.Enabled = false;
-                        ((TextBox)sender).ForeColor = Color.DarkRed;
-                    }
+                    ((TextBox)sender).ForeColor = Color.DarkRed;
                 }
             }
         }
 
         private void RefreshBtn_Click(object sender, EventArgs e)
         {
-            refreshBtn.Enabled = false;
-            refreshBtn.Refresh();
-
-            int nYear = Convert.ToInt32(sectionDateTxtBx.Text);
-            int nModule = Convert.ToInt32(sectionTxtBx.Text);
-            int i = 0;
-
-            foreach (RadioButton rb in AssignedCoursesSelector)
+            CancelEventArgs cancelEventArgs = new CancelEventArgs(false);
+            TrackDateTxtBx_Validating(trackDateTxtBx, cancelEventArgs);
+            if (false == cancelEventArgs.Cancel)
             {
-                rb.Visible = false;
+                TrackTxtBx_Validating(trackTxtBx, cancelEventArgs);
             }
 
-            foreach (KeyValuePair<string, int> kvp in CourseDict)
+            if (false == cancelEventArgs.Cancel)
             {
-                if (true == TestClassidInAssignments(nYear, nModule, kvp.Value))
+                TrackDateTxtBx_Validated(trackDateTxtBx, new EventArgs());
+                TrackDateTxtBx_Validated(trackTxtBx, new EventArgs());
+
+                int nYear = Convert.ToInt32(trackDateTxtBx.Text);
+                int nTrack = Convert.ToInt32(trackTxtBx.Text);
+                int i = 0;
+
+                foreach (RadioButton rb in AssignedCoursesSelector)
                 {
-                    AssignedCoursesSelector[i].Text = kvp.Key;
-                    AssignedCoursesSelector[i].Visible = true;
-                    i += 1;
+                    rb.Visible = false;
+                    rb.Enabled = false;
+                    rb.ForeColor = SystemColors.ControlText;
                 }
+
+                foreach (KeyValuePair<string, int> kvp in CourseDict)
+                {
+                    if (true == TestCourseidInAssignments(nYear, nTrack, kvp.Value))
+                    {
+                        AssignedCoursesSelector[i].Text = kvp.Key;
+                        AssignedCoursesSelector[i].Visible = true;
+                        AssignedCoursesSelector[i].Enabled = true;
+                        i += 1;
+                    }
+                }
+
+                // check for unassigned students
+                if (true == TestCourseidInAssignments(nYear, nTrack, -1))
+                {
+                    AssignedCoursesSelector[i].Text = "UN";
+                    AssignedCoursesSelector[i].Visible = true;
+                    AssignedCoursesSelector[i].Enabled = true;
+                }
+
+                AssignedCoursesSelector[0].Checked = true;
+                GetAssignedTrack(nYear, nTrack, CourseDict[AssignedCoursesSelector[0].Text]);
+
+                int nStudentId = Convert.ToInt32(asignedCoursesView.Rows[1].Cells[1].Value);
+                if (true == TestAssignmentIsLocked(nYear, nTrack, CourseDict[AssignedCoursesSelector[0].Text], nStudentId))
+                {
+                    foreach (RadioButton rb in AssignedCoursesSelector)
+                    {
+                        rb.ForeColor = Color.Green;
+                    }
+                    confirmTrackBtn.Enabled = false;
+                    confirmTrackBtn.Visible = false;
+                }
+                else
+                {
+                    confirmTrackBtn.Enabled = true;
+                    confirmTrackBtn.Visible = true;
+                }
+                asignedCoursesView.Tag = AssignedCoursesSelector[0].Text;
+                asignedCoursesView.RowEnter += new DataGridViewCellEventHandler(AsignedCoursesView_CellContentClick);
+                asignedCoursesView.Rows[0].Selected = true;
+
             }
-
-            AssignedCoursesSelector[0].Checked = true;
-            GetAssignedModule(nYear, nModule, CourseDict[AssignedCoursesSelector[0].Text]);
-
         }
 
-        private void GetAssignedModule(int nYear, int nModule, int nClassId)
+        private int GetAssignedTrack(int nYear, int nTrack, int nCourseId)
         {
+            int nRowCount = 0;
             try
             {
                 LimoServer.Open();
 
-                string query =
-                    "SELECT course_assignments.student_id, students.fname, students.lname, classes.grade, classes.class " +
+                string query = string.Format("SELECT course_assignments.id, course_assignments.student_id, students.fname, students.lname, classes.grade, classes.class " +
                     "FROM course_assignments " +
-                    "INNER JOIN classes ON students.class = classes.id " +
                     "INNER JOIN students ON course_assignments.student_id = students.id " +
-                    "WHERE section_date = '{0}' AND section = '{1}' AND class_id = '{2}';";
+                    "INNER JOIN classes ON students.class = classes.id " +
+                    "WHERE track_date = '{0}' AND track = '{1}' AND course_id = '{2}';", nYear, nTrack, nCourseId);
 
                 MySqlDataAdapter daAssignments = new MySqlDataAdapter(query, LimoServer);
                 DataSet dsTemp = new DataSet();
 
+                asignedCoursesView.Visible = false;
+                asignedCoursesView.ClearSelection();
+                asignedCoursesView.DataSource = null;
+                asignedCoursesView.Refresh();
                 daAssignments.Fill(dsTemp, "course_assignments");
                 asignedCoursesView.DataSource = dsTemp;
                 asignedCoursesView.DataMember = "course_assignments";
+                asignedCoursesView.Refresh();
 
-                asignedCoursesView.Columns[0].HeaderText = "ID";
-                asignedCoursesView.Columns[1].HeaderText = "Name";
-                asignedCoursesView.Columns[2].HeaderText = "Nachname";
-                asignedCoursesView.Columns[3].HeaderText = "Stufe";
-                asignedCoursesView.Columns[4].HeaderText = "Klasse";
+                asignedCoursesView.Columns[0].HeaderText = "Line";
+                asignedCoursesView.Columns[1].HeaderText = "ID";
+                asignedCoursesView.Columns[2].HeaderText = "Name";
+                asignedCoursesView.Columns[3].HeaderText = "Nachname";
+                asignedCoursesView.Columns[4].HeaderText = "Stufe";
+                asignedCoursesView.Columns[5].HeaderText = "Klasse";
+
+                asignedCoursesView.Columns[0].Visible = false;
 
                 asignedCoursesView.Visible = true;
+                nRowCount = dsTemp.Tables[0].Rows.Count;
             }
             catch (Exception ex)
             {
@@ -783,9 +814,12 @@ namespace LIMOUI
             {
                 LimoServer.Close();
             }
+
+            countStudentsTxtBx.Text = nRowCount.ToString();
+            return nRowCount;
         }
 
-        private bool TestClassidInAssignments(int nYear, int nModule, int nClassId)
+        private bool TestCourseidInAssignments(int nYear, int nTrack, int nCourseId)
         {
             bool bClassIsAssigned = false;
             try
@@ -797,8 +831,8 @@ namespace LIMOUI
 
                 LimoServer.Open();
                 cmd.CommandText = string.Format("SELECT COUNT(*) FROM course_assignments " +
-                    "WHERE section_date = '{0}' AND section = '{1}' AND class_id = '{2}';",
-                    nYear, nModule, nClassId);
+                    "WHERE track_date = '{0}' AND track = '{1}' AND course_id = '{2}';",
+                    nYear, nTrack, nCourseId);
                 object result = cmd.ExecuteScalar();
                 if ((result != null) && (Convert.ToInt32(result) > 0))
                 {
@@ -816,6 +850,215 @@ namespace LIMOUI
             }
 
             return bClassIsAssigned;
+        }
+
+        private bool TestAssignmentIsLocked(int nYear, int nTrack, int nCourseId, int nStudentId)
+        {
+            bool bClassIsLocked = false;
+            try
+            {
+                MySqlCommand cmd = new MySqlCommand
+                {
+                    Connection = LimoServer
+                };
+
+                LimoServer.Open();
+                cmd.CommandText = string.Format("SELECT isLocked FROM course_assignments " +
+                    "WHERE track_date = '{0}' AND track = '{1}' AND course_id = '{2}' AND student_id = {3};",
+                    nYear, nTrack, nCourseId, nStudentId);
+                object result = cmd.ExecuteScalar();
+                if ((result != null) && (Convert.ToInt32(result) > 0))
+                {
+                    bClassIsLocked = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                toolStripStatusLabel1.Text = ex.Message;
+                bClassIsLocked = false;
+            }
+            finally
+            {
+                LimoServer.Close();
+            }
+
+            return bClassIsLocked;
+        }
+
+        private void CourseSelector01_CheckedChanged(object sender, EventArgs e)
+        {
+            if (((RadioButton)sender).Checked == true)
+            {
+                int nYear = Convert.ToInt32(trackDateTxtBx.Text);
+                int nModule = Convert.ToInt32(trackTxtBx.Text);
+
+                if (((RadioButton)sender).Text == "UN")
+                {
+                    GetAssignedTrack(nYear, nModule, -1);
+                    asignedCoursesView.ContextMenuStrip = assignStudentMenu;
+                    courseSelectorCombo.Items.Clear();
+                    foreach (RadioButton rb in AssignedCoursesSelector)
+                    {
+                        courseSelectorCombo.Items.Add(rb.Text);
+                    }
+                }
+                else
+                {
+                    GetAssignedTrack(nYear, nModule, CourseDict[((RadioButton)sender).Text]);
+                    asignedCoursesView.ContextMenuStrip = null;
+                    courseSelectorCombo.Items.Clear();
+                }
+                asignedCoursesView.Tag = ((RadioButton)sender).Text;
+            }
+        }
+
+        private void AssignStudentMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            assignStudentMenu.Hide();
+            if (courseSelectorCombo.SelectedItem != null)
+            {
+                if (asignedCoursesView.SelectedRows.Count == 1)
+                {
+                    DataGridViewRow dgvSelectedRow = asignedCoursesView.SelectedRows[0];
+                    int nYear = Convert.ToInt32(trackDateTxtBx.Text);
+                    int nModule = Convert.ToInt32(trackTxtBx.Text);
+
+                    UpdateStudentAssignment(
+                        CourseDict[courseSelectorCombo.SelectedItem.ToString()],
+                        Convert.ToInt32(dgvSelectedRow.Cells[0].Value));
+
+                    if (TestCourseidInAssignments(nYear, nModule, -1) == false)
+                    {
+                        foreach (RadioButton rb in AssignedCoursesSelector)
+                        {
+                            if (rb.Text == "UN")
+                            {
+                                rb.Enabled = false;
+                                rb.Visible = false;
+                                AssignedCoursesSelector[0].Checked = true;
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        GetAssignedTrack(nYear, nModule, -1);
+                    }
+                }
+            }
+        }
+
+        private void UpdateStudentAssignment(int nNewClass, int nLineId)
+        {
+            try
+            {
+                MySqlCommand cmd = new MySqlCommand
+                {
+                    Connection = LimoServer
+                };
+                LimoServer.Open();
+
+                cmd.CommandText = string.Format("UPDATE course_assignments SET course_id = '{0}' WHERE (id = '{1}');",
+                   nNewClass, nLineId);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                toolStripStatusLabel1.Text = ex.Message;
+            }
+            finally
+            {
+                LimoServer.Close();
+            }
+        }
+
+        private void ConfirmTrack(int nYear, int nTrack)
+        {
+            try
+            {
+                MySqlCommand cmd = new MySqlCommand
+                {
+                    Connection = LimoServer
+                };
+                LimoServer.Open();
+
+                cmd.CommandText = string.Format("UPDATE course_assignments SET isLocked = '1' WHERE (track_date = '{0}' AND track = '{1}');",
+                   nYear, nTrack);
+                cmd.ExecuteNonQuery();
+                cmd.CommandText = string.Format("INSERT INTO confirmed_modules (track, track_date) " +
+                    "VALUES ('{0}', '{1}');", nTrack, nYear);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                toolStripStatusLabel1.Text = ex.Message;
+            }
+            finally
+            {
+                LimoServer.Close();
+            }
+        }
+
+        private void ConfirmTrackBtn_Click(object sender, EventArgs e)
+        {
+            ((Button)sender).Enabled = false;
+            ((Button)sender).Visible = false;
+
+            ConfirmTrack(Convert.ToInt32(trackDateTxtBx.Text), Convert.ToInt32(trackTxtBx.Text));
+        }
+
+        private void GetAllCoursesForStudent(int nStudentId, int nYear)
+        {
+            try
+            {
+                LimoServer.Open();
+                string query = string.Format("SELECT course_assignments.track, available_courses.type, available_courses.num " +
+                    "FROM course_assignments " +
+                    "INNER JOIN available_courses ON available_courses.id = course_assignments.course_id " +
+                    "WHERE track_date = '{0}' AND student_id = '{1}';", nYear, nStudentId);
+
+                MySqlDataAdapter daAssignments = new MySqlDataAdapter(query, LimoServer);
+                DataSet dsTemp = new DataSet();
+
+                studentDetailView.Visible = false;
+                studentDetailView.ClearSelection();
+                studentDetailView.DataSource = null;
+                studentDetailView.Refresh();
+
+                daAssignments.Fill(dsTemp, "course_assignments");
+                studentDetailView.DataSource = dsTemp;
+                studentDetailView.DataMember = "course_assignments";
+                studentDetailView.Refresh();
+
+                studentDetailView.Columns[0].HeaderText = "Track";
+                studentDetailView.Columns[1].HeaderText = "Course";
+
+                studentDetailView.Visible = true;
+            }
+            catch (Exception ex)
+            {
+                toolStripStatusLabel1.Text = ex.Message;
+            }
+            finally
+            {
+                LimoServer.Close();
+            }
+        }
+
+        private void AsignedCoursesView_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                asignedCoursesView.Rows[e.RowIndex].Selected = true;
+                studentDetailNameTxtBx.Text =
+                    asignedCoursesView.Rows[e.RowIndex].Cells[2].Value.ToString() +
+                    " " +
+                    asignedCoursesView.Rows[e.RowIndex].Cells[3].Value.ToString();
+
+                GetAllCoursesForStudent(
+                    Convert.ToInt32(asignedCoursesView.Rows[e.RowIndex].Cells[1].Value),
+                    Convert.ToInt32(trackDateTxtBx.Text));
+            }
         }
 
         private void UpdateStudent(int nStudentId, string sFname, string sLname, int nClass, int nSchoolType)
@@ -931,6 +1174,8 @@ namespace LIMOUI
                                 (courseId + 1).ToString(),
                                 "-1"
                             },
+                            Anchor = (AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top),
+                            Padding = new Padding(3),
                             //Enabled = false,
                             UseVisualStyleBackColor = true
                         };
@@ -968,16 +1213,61 @@ namespace LIMOUI
 
         private void Form1_Shown(object sender, EventArgs e)
         {
-            //ConnStr = "server=cdr-wa.dyndns.org;port=3105;database=david_db;user=david;password=51Jti0IeQn";
-            ConnStr = "server=localhost;port=3306;database=david_db;user=cr3105;password=David#3105";
-            LimoServer = new MySqlConnection(ConnStr);
+            LimoInputConnection = Environment.GetEnvironmentVariable("limoinput_connection");
+            if (LimoInputConnection == null)
+            {
+                toolStripStatusLabel1.Text = "Environment Variable limoinput_connection must be defined.";
+            }
+            else
+            {
+                LimoInputConnection = LimoInputConnection.Trim(new char[] { '{', '}', '\"' });
+                LimoInputConnection = LimoInputConnection.Replace('\"', ' ');
 
-            GetStudents();
-            GetAvailableCoursesClassesAndSchooltypes();
+                String[] elements = LimoInputConnection.Split(new char[] {':', ','});
+                if ((elements.Length % 2) == 0)
+                {
+                    for (int i = 0; i < elements.Length; i += 2)
+                    {
+                        ConnectionString[elements[i].Trim()] = elements[i + 1].Trim();
+                    }
 
-            studentTableView.RowEnter += new DataGridViewCellEventHandler(StudentTableView_RowEnter);
-            studentTableView.Rows[0].Selected = true;
-            countCoursesTxtBx.Text = "0";
+                    ConnStr = "";
+                    if (ConnectionString.ContainsKey("host"))
+                    {
+                        ConnStr += "server=" + ConnectionString["host"] + ";";
+                    }
+                    if (ConnectionString.ContainsKey("port"))
+                    {
+                        ConnStr += "port=" + ConnectionString["port"] + ";";
+                    }
+                    if (ConnectionString.ContainsKey("db"))
+                    {
+                        ConnStr += "database=" + ConnectionString["db"] + ";";
+                    }
+                    if (ConnectionString.ContainsKey("user"))
+                    {
+                        ConnStr += "user=" + ConnectionString["user"] + ";";
+                    }
+                    if (ConnectionString.ContainsKey("passwd"))
+                    {
+                        ConnStr += "password=" + ConnectionString["passwd"] + ";";
+                    }
+                    ConnStr = ConnStr.TrimEnd(new char[] { ';'});
+
+                    LimoServer = new MySqlConnection(ConnStr);
+
+                    GetStudents();
+                    GetAvailableCoursesClassesAndSchooltypes();
+
+                    studentTableView.RowEnter += new DataGridViewCellEventHandler(StudentTableView_RowEnter);
+                    studentTableView.Rows[0].Selected = true;
+                    countCoursesTxtBx.Text = "0";
+                }
+                else
+                {
+                    toolStripStatusLabel1.Text = "Environment Variable limoinput_connection has wrong format.";
+                }
+            }
         }
 
         private void GetCurrentStudent(int rowIndex)
@@ -994,7 +1284,7 @@ namespace LIMOUI
         private void StudentTableView_RowEnter(object sender, DataGridViewCellEventArgs e)
         {
             studentTableView.Rows[e.RowIndex].Selected = true;
-            currentStudentTableIndex = e.RowIndex;
+            CurrentStudentTableIndex = e.RowIndex;
             modifyStudentBtn.Enabled = true;
             deleteStudentBtn.Enabled = true;
             newStudentBtn.Enabled = true;
@@ -1007,8 +1297,8 @@ namespace LIMOUI
             newStudentBtn.Enabled = false;
             limoUiTabControl.SelectedTab = Modify;
             ClearStudentChoices();
-            GetCurrentStudent(currentStudentTableIndex);
-            GetStudentChoices((int)studentTableView.Rows[currentStudentTableIndex].Cells[0].Value);
+            GetCurrentStudent(CurrentStudentTableIndex);
+            GetStudentChoices((int)studentTableView.Rows[CurrentStudentTableIndex].Cells[0].Value);
 
             prevBtn.Enabled = true;
             nextBtn.Enabled = true;

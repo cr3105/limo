@@ -10,72 +10,10 @@ from timeit                 import default_timer            as timer
 from concurrent.futures     import ThreadPoolExecutor
 from itertools              import permutations
 import os
+import xlsxwriter
 
 course_dict = dict()
-confirmed_sections = None
-
-def call_storedproc_in_db(connection: object, procname: str, *args: tuple) -> list:
-    results = None
-    cursor = None
-
-    # ensure we have received a valid connection object
-    if not connection or connection is None:
-        print(f'Received invalid MySQLConnection object!\n\tConnection is {type(connection)} expected MySQLConnection.')
-
-    else:
-        try:
-            # create a cursor object for this transaction
-            cursor = connection.cursor(buffered=True)
-
-        except MySQL_Error as e:
-            cursor.close()
-
-            if hasattr(e, 'errno'):
-                print(f'Executing the query failed due to MySQL error {e.errno}.\n\tReason: {str(e)}')
-            else:
-                print(f'Executing the query failed due to MySQL error.\n\tReason: {str(e)}')
-
-            return None
-
-        except Exception as e:
-            cursor.close()
-
-            print(f'Creating cursor object failed due to unknown error.\n\tReason: {str(e)}')
-            return None
-
-        try:
-            # execute the command
-            cursor.callproc(procname, args[0])
-            print(cursor.statement)
-            
-
-        except MySQL_Error as e:
-            # if an error occurs we need to let MySQL know that the last transaction(s) should be discarded
-            print('An error occurred, rolling back changes ...')
-            connection.rollback()
-
-            if hasattr(e, 'errno'):
-                print(f'Executing the query failed due to MySQL error {e.errno}.\n\tReason: {str(e)}')
-            else:
-                print(f'Executing the query failed due to MySQL error.\n\tReason: {str(e)}')
-
-            return None
-
-        except Exception as e:
-            # if an error occurs we need to let MySQL know that the last transaction(s) should be discarded
-            print('An error occurred, rolling back changes ...')
-            connection.rollback()
-
-            print(f'Executing the query failed due to unknown error.\n\tReason: {str(e)}')
-            return None
-
-        # create a list of results
-        results = [item.fetchall() for item in cursor.stored_results()]
-
-        # close the cursor to avoid memory leaks
-        cursor.close()
-
-    return results
+confirmed_tracks = None
 
 def execute_db_command(connection: object, command: str, commit: int, *args: tuple) -> (list, int):
     """
@@ -324,13 +262,12 @@ def main() -> None:
 
     return None
 
-
 def output_results(result: tuple, connection: object, **kwargs: dict) -> None:
     unique_classes = {}
     format_string  = ',{},{},{},{},{},\n'
     format_string2 = ',{},{},{},{}{},{},\n'
 
-    global confirmed_sections
+    global confirmed_tracks
 
     student_info = get_student_info(connection)
     year = kwargs['year_to_schedule']    
@@ -341,67 +278,90 @@ def output_results(result: tuple, connection: object, **kwargs: dict) -> None:
 
     for i, _ in enumerate(result[0]):
         print("*" * 75)
-        print("\nBegin Section {}: ".format(i + 1))
+        print("\nBegin Track {}: ".format(i + 1))
         seen = {}
 
         #command line output
-        for modul in result[0][i]:
-            print(f"{modul[1]}: {modul[0]}\n\tAnzahl Schueler: {len(modul[0])}\n")
-            unique_classes[modul[1]] = modul[1]
+        for track in result[0][i]:
+            track[0].sort()
+            print(f"{track[1]}: {track[0]}\n\tAnzahl Schueler: {len(track[0])}\n")
+            unique_classes[track[1]] = track[1]
 
-            for s in modul[0]:
+            for s in track[0]:
                 if s in seen:
                     print(f'Student {s} is in multiple modules!')
                 else:
                     seen[s] = s
-        print(f'Unassigned students for this section ({len(result[1][i])}): {result[1][i]}')
+        print(f'Unassigned students for this track ({len(result[1][i])}): {result[1][i]}')
 
         print("*" * 75)
 
         #text file output
-        with open(f'./RESULTS/section{i+1}.txt', 'w') as f:
-            for modul in result[0][i]:
-                f.write(f"{modul[1]}: {modul[0]}\n\tAnzahl Schueler: {len(modul[0])}\n")
-            f.write(f'Unassigned students for this section ({len(result[1][i])}): {result[1][i]}')
+        with open(f'./RESULTS/track{i+1}.txt', 'w') as f:
+            for track in result[0][i]:
+                f.write(f"{track[1]}: {track[0]}\n\tAnzahl Schueler: {len(track[0])}\n")
+            f.write(f'Unassigned students for this track ({len(result[1][i])}): {result[1][i]}')
             f.close()
 
         #CSV file output
-        with open(f'./RESULTS/zuordnung_schiene_{i+1}.csv', 'w') as f:
-            f.write(format_string.format('Schueler-Nr.','SchuelerNachname','SchuelerRufname','Klasse','Kurs'))
-            for modul in result[0][i]:
-                for student_id in modul[0]:
-                    if str(student_id) in student_info: 
-                        f.write(format_string2.format(student_id, student_info[str(student_id)][1], 
-                                                        student_info[str(student_id)][0], 
-                                                        student_info[str(student_id)][2], 
-                                                        student_info[str(student_id)][3], modul[1]))
-                    else:
-                        f.write(format_string.format(student_id, 'Information', 'Not', 'Available', modul[1]))
-                f.write('Anzahl Schueler: {},\n'.format(len(modul[0])))
-                f.write(format_string.format('', '', '', '', ''))
+        workbook = xlsxwriter.Workbook('./RESULTS/track_{}.xlsx'.format(i+1))
+        worksheet = workbook.add_worksheet()
 
-            f.write('Anzahl Kurse: {},\n'.format(len(result[0][i])))
-            f.write(format_string.format('', '', '', '', ''))
+        worksheet.write(0, 1,'Schueler-Nr.')
+        worksheet.write(0, 2,'SchuelerNachname')
+        worksheet.write(0, 3,'SchuelerRufname')
+        worksheet.write(0, 4,'Klasse')
+        worksheet.write(0, 5,'Kurs')
 
-            for student_id in result[1][i]:
-                f.write(format_string2.format(student_id, student_info[str(student_id)][1], 
-                                                    student_info[str(student_id)][0], 
-                                                    student_info[str(student_id)][2],
-                                                    student_info[str(student_id)][3],'unassigned'))
-            f.write('Anzahl Schueler: {},\n'.format(len(result[1][i])))
-            f.close()
+        row = 1
+        for track in result[0][i]:
+            for student_id in track[0]:
+                worksheet.write(row, 1, student_id)
+                worksheet.write(row, 5, track[1])
+                if str(student_id) in student_info:
+                    worksheet.write(row, 2, student_info[str(student_id)][1])
+                    worksheet.write(row, 3, student_info[str(student_id)][0])
+                    worksheet.write(row, 4, '{}{}'.format(student_info[str(student_id)][2],student_info[str(student_id)][3]))
+                else:
+                    worksheet.write(row, 2, 'Information')
+                    worksheet.write(row, 3, 'Not')
+                    worksheet.write(row, 4, 'Available')
+                row += 1
+            
+            worksheet.write(row, 0, 'Anzahl Schueler: {}'.format(len(track[0])))
+            row += 2
+
+        worksheet.write(row, 0, 'Anzahl Kurse: {}'.format(len(result[0][i])))
+        row += 2
+
+        worksheet.write(row, 0, 'Not assigned:')
+        row += 1
+        for student_id in result[1][i]:
+            worksheet.write(row, 1, student_id)
+            worksheet.write(row, 5, 'unassigned')
+            if str(student_id) in student_info:
+                worksheet.write(row, 2, student_info[str(student_id)][1])
+                worksheet.write(row, 3, student_info[str(student_id)][0])
+                worksheet.write(row, 4, '{}{}'.format(student_info[str(student_id)][2],student_info[str(student_id)][3]))
+            else:
+                worksheet.write(row, 2, 'Information')
+                worksheet.write(row, 3, 'Not')
+                worksheet.write(row, 4, 'Available')
+            row += 1
+        worksheet.write(row, 0, 'Anzahl Schueler: {}'.format(len(result[1][i])))
+        workbook.close()
 
         # database output_results (only newly generated courses, skip confirmed ones
-        if (i+1) in confirmed_sections:
+        if (i+1) in confirmed_tracks:
             continue
 
-        update_cmd = "INSERT INTO course_assignments (section_date, section, class_id, student_id, isLocked) \
+        update_cmd = "INSERT INTO course_assignments (track_date, track, course_id, student_id, isLocked) \
                       VALUES ('{0}', '{1}', '{2}', '{3}', '{4}');"
 
-        for modul in result[0][i]:
-            class_id = course_dict[modul[1]] 
-            for student_id in modul[0]:
-                execute_db_command(connection, update_cmd.format(year,i+1,class_id,student_id,0), 1)
+        for track in result[0][i]:
+            course_id = course_dict[track[1]] 
+            for student_id in track[0]:
+                execute_db_command(connection, update_cmd.format(year,i+1,course_id,student_id,0), 1)
 
         for student_id in result[1][i]:
             execute_db_command(connection, update_cmd.format(year,i+1,-1,student_id,0), 1)
@@ -411,7 +371,6 @@ def output_results(result: tuple, connection: object, **kwargs: dict) -> None:
     print(f'Unique courses assigned: {test}')
 
     return None
-
 
 def get_student_info(connection):
 
@@ -429,7 +388,6 @@ def get_student_info(connection):
     else:
         raise ValueError('No student info found!')
 
-
 def remove_set_difference(list1, list2) -> None:
     for i in list2:
         if i in list1:
@@ -439,7 +397,6 @@ def remove_set_difference(list1, list2) -> None:
                 list1.discard(i)
 
     return None
-
 
 def pick_modul(modul_liste, students, used_courses) -> int: 
     found_index = -1
@@ -463,14 +420,14 @@ def pick_modul(modul_liste, students, used_courses) -> int:
     
     return found_index
 
-def get_confirmed_section(connection, modullisten, section_date, section_id) -> (list, int):
+def get_confirmed_track(connection, modullisten, track_date, track_id) -> (list, int):
     firstS = []
     hasFrench = 0;
     
     for course in course_dict:
         course_id = course_dict[course]
         query = "SELECT student_id FROM course_assignments \
-            WHERE section_date = '{}' AND section = '{}' AND class_id = '{}';".format(section_date,section_id, course_id)
+            WHERE track_date = '{}' AND track = '{}' AND course_id = '{}';".format(track_date,track_id, course_id)
         confirmed_section, rows = execute_db_command(connection, query, 0)
         if rows > 0:
             l = [id[0] for id in confirmed_section]
@@ -490,43 +447,39 @@ def get_confirmed_section(connection, modullisten, section_date, section_id) -> 
 
 def run(connection: object, **kwargs: dict) -> tuple:
     """
-    Program main thread for building the section lists and sending them to the database for permanent storage
+    Program main thread for building the track lists and sending them to the database for permanent storage
 
     :param connection: A valid MySQL connection object.
     :type connection: :class:``MySQLConnection``
     :return: Nothing
     """
-    global confirmed_sections
+    global confirmed_tracks
 
     if connection is None:
         print('Invalid connection received! Terminating ...')
         exit(1)
 
-
-    # stp_args = ('D1')
-    # call_storedproc_in_db(connection, 'get_module_list', stp_args)
-
     # determine number of lists needed to store sections:
     # we need the number of already confirmed sections in the database plus one
     year = kwargs['year_to_schedule']    
-    query = 'SELECT confirmed_modules.section FROM confirmed_modules WHERE section_date="{}" ORDER BY section;'.format(year)
+    query = 'SELECT confirmed_modules.track FROM confirmed_modules WHERE track_date="{}" ORDER BY track;'.format(year)
     temp_list, num_sections = execute_db_command(connection, query, 0)
     num_sections += 1 
-    confirmed_sections = [item[0] for item in temp_list]
+    confirmed_tracks = [item[0] for item in temp_list]
 
     leftovers = [[] for i in range(num_sections)]
     result = [[] for i in range(num_sections)]
     student_set = schuelerliste(connection)
     modullisten, modul_ids = get_modules(connection)
     id_perms = list(permutations(modul_ids, len(modul_ids)))
-    # 1 E, D, M pro section
+    # 1 E, D, M pro track
     # all french in one course, repeat once
     french_needed = 2
 
     # read all assigned and confirmed sections back from database
     current_id = 0
-    for section_id in confirmed_sections:
-        result[current_id], hasFrench = (get_confirmed_section(connection, modullisten, year, section_id))
+    for track_id in confirmed_tracks:
+        result[current_id], hasFrench = (get_confirmed_track(connection, modullisten, year, track_id))
         if hasFrench == 1:
             french_needed -= 1
         current_id += 1
@@ -560,7 +513,7 @@ def run(connection: object, **kwargs: dict) -> tuple:
                 for l in v:
                     temp_modullisten[k].append((list(l[0]), str(l[1])))
 
-            temp_section = generate_section(temp_modullisten, list(temp_students), ordering, courses_needed)
+            temp_section = generate_track(temp_modullisten, list(temp_students), ordering, courses_needed)
             if len(temp_section[1]) < best:
                 best_section = temp_section
                 best = len(temp_section[1])
@@ -571,8 +524,7 @@ def run(connection: object, **kwargs: dict) -> tuple:
 
     return (result, leftovers)
 
-
-def generate_section(modullisten, temp_students, modul_ids, count_courses):
+def generate_track(modullisten, temp_students, modul_ids, count_courses):
     used_courses = {}
     current_section = []
 
