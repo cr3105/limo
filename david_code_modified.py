@@ -128,7 +128,7 @@ def zuteilen(source: set, students: set) -> list:
 
     # SuS waehlen
     picked = []
-    CLASS_SIZE = 20
+    CLASS_SIZE = 19
 
     while len(picked) < CLASS_SIZE:
         current = sample(source, 50 if len(source) >= 50 else len(source))
@@ -281,20 +281,6 @@ def output_results(result: tuple, connection: object, **kwargs: dict) -> None:
         print("\nBegin Track {}: ".format(i + 1))
         seen = {}
 
-        #command line output
-        for track in result[0][i]:
-            track[0].sort()
-            print(f"{track[1]}: {track[0]}\n\tAnzahl Schueler: {len(track[0])}\n")
-            unique_classes[track[1]] = track[1]
-
-            for s in track[0]:
-                if s in seen:
-                    print(f'Student {s} is in multiple modules!')
-                else:
-                    seen[s] = s
-        print(f'Unassigned students for this track ({len(result[1][i])}): {result[1][i]}')
-
-        print("*" * 75)
 
         #text file output
         with open(f'./RESULTS/track{i+1}.txt', 'w') as f:
@@ -365,6 +351,21 @@ def output_results(result: tuple, connection: object, **kwargs: dict) -> None:
 
         for student_id in result[1][i]:
             execute_db_command(connection, update_cmd.format(year,i+1,-1,student_id,0), 1)
+
+        #command line output
+        for track in result[0][i]:
+            track[0].sort()
+            print(f"{track[1]}: {track[0]}\n\tAnzahl Schueler: {len(track[0])}\n")
+            unique_classes[track[1]] = track[1]
+
+            for s in track[0]:
+                if s in seen:
+                    print(f'Student {s} is in multiple modules!')
+                else:
+                    seen[s] = s
+        print(f'Unassigned students for this track ({len(result[1][i])}): {result[1][i]}')
+
+        print("*" * 75)
 
     test = list(unique_classes)
     test.sort()
