@@ -95,6 +95,66 @@
             this.courseSelector02 = new System.Windows.Forms.RadioButton();
             this.courseSelector01 = new System.Windows.Forms.RadioButton();
             this.asignedCoursesView = new System.Windows.Forms.DataGridView();
+            this.Courses = new System.Windows.Forms.TabPage();
+            this.checkIntegrityBtn = new System.Windows.Forms.Button();
+            this.courseCountTxtBx = new System.Windows.Forms.TextBox();
+            this.label51 = new System.Windows.Forms.Label();
+            this.courseSelectionView = new System.Windows.Forms.DataGridView();
+            this.courseGrid = new System.Windows.Forms.TableLayoutPanel();
+            this.label36 = new System.Windows.Forms.Label();
+            this.label37 = new System.Windows.Forms.Label();
+            this.label38 = new System.Windows.Forms.Label();
+            this.label39 = new System.Windows.Forms.Label();
+            this.label40 = new System.Windows.Forms.Label();
+            this.label41 = new System.Windows.Forms.Label();
+            this.label42 = new System.Windows.Forms.Label();
+            this.label43 = new System.Windows.Forms.Label();
+            this.label44 = new System.Windows.Forms.Label();
+            this.label45 = new System.Windows.Forms.Label();
+            this.label46 = new System.Windows.Forms.Label();
+            this.label47 = new System.Windows.Forms.Label();
+            this.label48 = new System.Windows.Forms.Label();
+            this.label49 = new System.Windows.Forms.Label();
+            this.label50 = new System.Windows.Forms.Label();
+            this.defaultCourseSelectorRB = new System.Windows.Forms.RadioButton();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.radioButton3 = new System.Windows.Forms.RadioButton();
+            this.radioButton4 = new System.Windows.Forms.RadioButton();
+            this.radioButton5 = new System.Windows.Forms.RadioButton();
+            this.radioButton6 = new System.Windows.Forms.RadioButton();
+            this.radioButton7 = new System.Windows.Forms.RadioButton();
+            this.radioButton8 = new System.Windows.Forms.RadioButton();
+            this.radioButton11 = new System.Windows.Forms.RadioButton();
+            this.radioButton12 = new System.Windows.Forms.RadioButton();
+            this.radioButton13 = new System.Windows.Forms.RadioButton();
+            this.radioButton9 = new System.Windows.Forms.RadioButton();
+            this.radioButton14 = new System.Windows.Forms.RadioButton();
+            this.radioButton16 = new System.Windows.Forms.RadioButton();
+            this.radioButton17 = new System.Windows.Forms.RadioButton();
+            this.radioButton18 = new System.Windows.Forms.RadioButton();
+            this.radioButton19 = new System.Windows.Forms.RadioButton();
+            this.radioButton20 = new System.Windows.Forms.RadioButton();
+            this.radioButton21 = new System.Windows.Forms.RadioButton();
+            this.radioButton22 = new System.Windows.Forms.RadioButton();
+            this.radioButton23 = new System.Windows.Forms.RadioButton();
+            this.radioButton24 = new System.Windows.Forms.RadioButton();
+            this.radioButton25 = new System.Windows.Forms.RadioButton();
+            this.radioButton26 = new System.Windows.Forms.RadioButton();
+            this.radioButton27 = new System.Windows.Forms.RadioButton();
+            this.radioButton28 = new System.Windows.Forms.RadioButton();
+            this.radioButton29 = new System.Windows.Forms.RadioButton();
+            this.radioButton30 = new System.Windows.Forms.RadioButton();
+            this.radioButton31 = new System.Windows.Forms.RadioButton();
+            this.radioButton32 = new System.Windows.Forms.RadioButton();
+            this.radioButton33 = new System.Windows.Forms.RadioButton();
+            this.radioButton34 = new System.Windows.Forms.RadioButton();
+            this.radioButton10 = new System.Windows.Forms.RadioButton();
+            this.radioButton15 = new System.Windows.Forms.RadioButton();
+            this.radioButton35 = new System.Windows.Forms.RadioButton();
+            this.radioButton36 = new System.Windows.Forms.RadioButton();
+            this.radioButton37 = new System.Windows.Forms.RadioButton();
+            this.radioButton38 = new System.Windows.Forms.RadioButton();
+            this.radioButton39 = new System.Windows.Forms.RadioButton();
             this.About = new System.Windows.Forms.TabPage();
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
@@ -121,6 +181,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.studentDetailView)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.asignedCoursesView)).BeginInit();
+            this.Courses.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.courseSelectionView)).BeginInit();
+            this.courseGrid.SuspendLayout();
             this.About.SuspendLayout();
             this.assignStudentMenu.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -132,12 +195,14 @@
             this.limoUiTabControl.Controls.Add(this.Students);
             this.limoUiTabControl.Controls.Add(this.Modify);
             this.limoUiTabControl.Controls.Add(this.Tracks);
+            this.limoUiTabControl.Controls.Add(this.Courses);
             this.limoUiTabControl.Controls.Add(this.About);
             this.limoUiTabControl.Location = new System.Drawing.Point(12, 12);
             this.limoUiTabControl.Name = "limoUiTabControl";
             this.limoUiTabControl.SelectedIndex = 0;
             this.limoUiTabControl.Size = new System.Drawing.Size(776, 413);
             this.limoUiTabControl.TabIndex = 3;
+            this.limoUiTabControl.Selected += new System.Windows.Forms.TabControlEventHandler(this.LimoUiTabControl_Selected);
             // 
             // Students
             // 
@@ -150,7 +215,7 @@
             this.Students.Padding = new System.Windows.Forms.Padding(3);
             this.Students.Size = new System.Drawing.Size(768, 384);
             this.Students.TabIndex = 0;
-            this.Students.Text = "Studenten";
+            this.Students.Text = "Student List";
             this.Students.UseVisualStyleBackColor = true;
             // 
             // newStudentBtn
@@ -234,7 +299,7 @@
             this.Modify.Padding = new System.Windows.Forms.Padding(3);
             this.Modify.Size = new System.Drawing.Size(768, 384);
             this.Modify.TabIndex = 1;
-            this.Modify.Text = "Modifizieren";
+            this.Modify.Text = "Student Details";
             this.Modify.UseVisualStyleBackColor = true;
             this.Modify.Enter += new System.EventHandler(this.Modify_Enter);
             // 
@@ -425,7 +490,7 @@
             this.tableLayoutPanel1.Controls.Add(this.label18, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.label17, 0, 0);
             this.tableLayoutPanel1.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(472, 12);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(471, 12);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 11;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
@@ -925,6 +990,841 @@
             this.asignedCoursesView.TabIndex = 0;
             this.asignedCoursesView.Visible = false;
             // 
+            // Courses
+            // 
+            this.Courses.Controls.Add(this.checkIntegrityBtn);
+            this.Courses.Controls.Add(this.courseCountTxtBx);
+            this.Courses.Controls.Add(this.label51);
+            this.Courses.Controls.Add(this.courseSelectionView);
+            this.Courses.Controls.Add(this.courseGrid);
+            this.Courses.Location = new System.Drawing.Point(4, 25);
+            this.Courses.Name = "Courses";
+            this.Courses.Size = new System.Drawing.Size(768, 384);
+            this.Courses.TabIndex = 4;
+            this.Courses.Text = "Course Details";
+            this.Courses.UseVisualStyleBackColor = true;
+            // 
+            // checkIntegrityBtn
+            // 
+            this.checkIntegrityBtn.Location = new System.Drawing.Point(371, 353);
+            this.checkIntegrityBtn.Name = "checkIntegrityBtn";
+            this.checkIntegrityBtn.Size = new System.Drawing.Size(96, 23);
+            this.checkIntegrityBtn.TabIndex = 33;
+            this.checkIntegrityBtn.Text = "Check Integrity";
+            this.checkIntegrityBtn.UseVisualStyleBackColor = true;
+            this.checkIntegrityBtn.Click += new System.EventHandler(this.CheckIntegrityBtn_Click);
+            // 
+            // courseCountTxtBx
+            // 
+            this.courseCountTxtBx.Location = new System.Drawing.Point(371, 33);
+            this.courseCountTxtBx.Name = "courseCountTxtBx";
+            this.courseCountTxtBx.ReadOnly = true;
+            this.courseCountTxtBx.Size = new System.Drawing.Size(78, 20);
+            this.courseCountTxtBx.TabIndex = 32;
+            this.courseCountTxtBx.Text = "0";
+            // 
+            // label51
+            // 
+            this.label51.AutoSize = true;
+            this.label51.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label51.Location = new System.Drawing.Point(368, 17);
+            this.label51.Name = "label51";
+            this.label51.Size = new System.Drawing.Size(99, 13);
+            this.label51.TabIndex = 31;
+            this.label51.Text = "Anzahl Students";
+            // 
+            // courseSelectionView
+            // 
+            this.courseSelectionView.AllowUserToAddRows = false;
+            this.courseSelectionView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.courseSelectionView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.courseSelectionView.Location = new System.Drawing.Point(3, 17);
+            this.courseSelectionView.MultiSelect = false;
+            this.courseSelectionView.Name = "courseSelectionView";
+            this.courseSelectionView.ReadOnly = true;
+            this.courseSelectionView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.courseSelectionView.Size = new System.Drawing.Size(359, 362);
+            this.courseSelectionView.TabIndex = 14;
+            this.courseSelectionView.Visible = false;
+            // 
+            // courseGrid
+            // 
+            this.courseGrid.AutoSize = true;
+            this.courseGrid.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Inset;
+            this.courseGrid.ColumnCount = 6;
+            this.courseGrid.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
+            this.courseGrid.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.courseGrid.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.courseGrid.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.courseGrid.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.courseGrid.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 20F));
+            this.courseGrid.Controls.Add(this.label36, 5, 0);
+            this.courseGrid.Controls.Add(this.label37, 4, 0);
+            this.courseGrid.Controls.Add(this.label38, 3, 0);
+            this.courseGrid.Controls.Add(this.label39, 2, 0);
+            this.courseGrid.Controls.Add(this.label40, 1, 0);
+            this.courseGrid.Controls.Add(this.label41, 0, 1);
+            this.courseGrid.Controls.Add(this.label42, 0, 2);
+            this.courseGrid.Controls.Add(this.label43, 0, 3);
+            this.courseGrid.Controls.Add(this.label44, 0, 4);
+            this.courseGrid.Controls.Add(this.label45, 0, 5);
+            this.courseGrid.Controls.Add(this.label46, 0, 6);
+            this.courseGrid.Controls.Add(this.label47, 0, 7);
+            this.courseGrid.Controls.Add(this.label48, 0, 8);
+            this.courseGrid.Controls.Add(this.label49, 0, 9);
+            this.courseGrid.Controls.Add(this.label50, 0, 10);
+            this.courseGrid.Controls.Add(this.defaultCourseSelectorRB, 1, 1);
+            this.courseGrid.Controls.Add(this.radioButton2, 2, 1);
+            this.courseGrid.Controls.Add(this.radioButton3, 1, 2);
+            this.courseGrid.Controls.Add(this.radioButton4, 2, 2);
+            this.courseGrid.Controls.Add(this.radioButton5, 3, 1);
+            this.courseGrid.Controls.Add(this.radioButton6, 4, 1);
+            this.courseGrid.Controls.Add(this.radioButton7, 5, 1);
+            this.courseGrid.Controls.Add(this.radioButton8, 3, 2);
+            this.courseGrid.Controls.Add(this.radioButton11, 1, 3);
+            this.courseGrid.Controls.Add(this.radioButton12, 2, 3);
+            this.courseGrid.Controls.Add(this.radioButton13, 3, 3);
+            this.courseGrid.Controls.Add(this.radioButton9, 1, 4);
+            this.courseGrid.Controls.Add(this.radioButton14, 2, 4);
+            this.courseGrid.Controls.Add(this.radioButton16, 3, 4);
+            this.courseGrid.Controls.Add(this.radioButton17, 1, 5);
+            this.courseGrid.Controls.Add(this.radioButton18, 2, 5);
+            this.courseGrid.Controls.Add(this.radioButton19, 3, 5);
+            this.courseGrid.Controls.Add(this.radioButton20, 1, 6);
+            this.courseGrid.Controls.Add(this.radioButton21, 2, 6);
+            this.courseGrid.Controls.Add(this.radioButton22, 3, 6);
+            this.courseGrid.Controls.Add(this.radioButton23, 1, 7);
+            this.courseGrid.Controls.Add(this.radioButton24, 2, 7);
+            this.courseGrid.Controls.Add(this.radioButton25, 3, 7);
+            this.courseGrid.Controls.Add(this.radioButton26, 1, 8);
+            this.courseGrid.Controls.Add(this.radioButton27, 2, 8);
+            this.courseGrid.Controls.Add(this.radioButton28, 3, 8);
+            this.courseGrid.Controls.Add(this.radioButton29, 1, 9);
+            this.courseGrid.Controls.Add(this.radioButton30, 2, 9);
+            this.courseGrid.Controls.Add(this.radioButton31, 3, 9);
+            this.courseGrid.Controls.Add(this.radioButton32, 1, 10);
+            this.courseGrid.Controls.Add(this.radioButton33, 2, 10);
+            this.courseGrid.Controls.Add(this.radioButton34, 3, 10);
+            this.courseGrid.Controls.Add(this.radioButton10, 4, 2);
+            this.courseGrid.Controls.Add(this.radioButton15, 4, 3);
+            this.courseGrid.Controls.Add(this.radioButton35, 4, 4);
+            this.courseGrid.Controls.Add(this.radioButton36, 4, 5);
+            this.courseGrid.Controls.Add(this.radioButton37, 4, 6);
+            this.courseGrid.Controls.Add(this.radioButton38, 4, 7);
+            this.courseGrid.Controls.Add(this.radioButton39, 4, 8);
+            this.courseGrid.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize;
+            this.courseGrid.Location = new System.Drawing.Point(495, 15);
+            this.courseGrid.Name = "courseGrid";
+            this.courseGrid.RowCount = 11;
+            this.courseGrid.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.courseGrid.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.courseGrid.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.courseGrid.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.courseGrid.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.courseGrid.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.courseGrid.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.courseGrid.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.courseGrid.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.courseGrid.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.courseGrid.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.courseGrid.Size = new System.Drawing.Size(269, 366);
+            this.courseGrid.TabIndex = 13;
+            // 
+            // label36
+            // 
+            this.label36.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label36.AutoSize = true;
+            this.label36.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label36.Location = new System.Drawing.Point(227, 2);
+            this.label36.Name = "label36";
+            this.label36.Padding = new System.Windows.Forms.Padding(3);
+            this.label36.Size = new System.Drawing.Size(37, 20);
+            this.label36.TabIndex = 4;
+            this.label36.Text = "F";
+            this.label36.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label37
+            // 
+            this.label37.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label37.AutoSize = true;
+            this.label37.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label37.Location = new System.Drawing.Point(182, 2);
+            this.label37.Name = "label37";
+            this.label37.Padding = new System.Windows.Forms.Padding(3);
+            this.label37.Size = new System.Drawing.Size(37, 20);
+            this.label37.TabIndex = 3;
+            this.label37.Text = "S";
+            this.label37.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label38
+            // 
+            this.label38.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label38.AutoSize = true;
+            this.label38.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label38.Location = new System.Drawing.Point(137, 2);
+            this.label38.Name = "label38";
+            this.label38.Padding = new System.Windows.Forms.Padding(3);
+            this.label38.Size = new System.Drawing.Size(37, 20);
+            this.label38.TabIndex = 2;
+            this.label38.Text = "M";
+            this.label38.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label39
+            // 
+            this.label39.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label39.AutoSize = true;
+            this.label39.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label39.Location = new System.Drawing.Point(92, 2);
+            this.label39.Name = "label39";
+            this.label39.Padding = new System.Windows.Forms.Padding(3);
+            this.label39.Size = new System.Drawing.Size(37, 20);
+            this.label39.TabIndex = 1;
+            this.label39.Text = "E";
+            this.label39.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label40
+            // 
+            this.label40.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label40.AutoSize = true;
+            this.label40.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label40.Location = new System.Drawing.Point(47, 2);
+            this.label40.Name = "label40";
+            this.label40.Padding = new System.Windows.Forms.Padding(3);
+            this.label40.Size = new System.Drawing.Size(37, 20);
+            this.label40.TabIndex = 0;
+            this.label40.Text = "D";
+            this.label40.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label41
+            // 
+            this.label41.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label41.AutoSize = true;
+            this.label41.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label41.Location = new System.Drawing.Point(5, 24);
+            this.label41.Name = "label41";
+            this.label41.Padding = new System.Windows.Forms.Padding(3);
+            this.label41.Size = new System.Drawing.Size(34, 32);
+            this.label41.TabIndex = 5;
+            this.label41.Text = "1";
+            this.label41.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label42
+            // 
+            this.label42.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label42.AutoSize = true;
+            this.label42.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label42.Location = new System.Drawing.Point(5, 58);
+            this.label42.Name = "label42";
+            this.label42.Padding = new System.Windows.Forms.Padding(3);
+            this.label42.Size = new System.Drawing.Size(34, 32);
+            this.label42.TabIndex = 6;
+            this.label42.Text = "2";
+            this.label42.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label43
+            // 
+            this.label43.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label43.AutoSize = true;
+            this.label43.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label43.Location = new System.Drawing.Point(5, 92);
+            this.label43.Name = "label43";
+            this.label43.Padding = new System.Windows.Forms.Padding(3);
+            this.label43.Size = new System.Drawing.Size(34, 32);
+            this.label43.TabIndex = 7;
+            this.label43.Text = "3";
+            this.label43.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label44
+            // 
+            this.label44.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label44.AutoSize = true;
+            this.label44.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label44.Location = new System.Drawing.Point(5, 126);
+            this.label44.Name = "label44";
+            this.label44.Padding = new System.Windows.Forms.Padding(3);
+            this.label44.Size = new System.Drawing.Size(34, 32);
+            this.label44.TabIndex = 8;
+            this.label44.Text = "4";
+            this.label44.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label45
+            // 
+            this.label45.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label45.AutoSize = true;
+            this.label45.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label45.Location = new System.Drawing.Point(5, 160);
+            this.label45.Name = "label45";
+            this.label45.Padding = new System.Windows.Forms.Padding(3);
+            this.label45.Size = new System.Drawing.Size(34, 32);
+            this.label45.TabIndex = 9;
+            this.label45.Text = "5";
+            this.label45.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label46
+            // 
+            this.label46.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label46.AutoSize = true;
+            this.label46.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label46.Location = new System.Drawing.Point(5, 194);
+            this.label46.Name = "label46";
+            this.label46.Padding = new System.Windows.Forms.Padding(3);
+            this.label46.Size = new System.Drawing.Size(34, 32);
+            this.label46.TabIndex = 10;
+            this.label46.Text = "6";
+            this.label46.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label47
+            // 
+            this.label47.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label47.AutoSize = true;
+            this.label47.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label47.Location = new System.Drawing.Point(5, 228);
+            this.label47.Name = "label47";
+            this.label47.Padding = new System.Windows.Forms.Padding(3);
+            this.label47.Size = new System.Drawing.Size(34, 32);
+            this.label47.TabIndex = 11;
+            this.label47.Text = "7";
+            this.label47.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label48
+            // 
+            this.label48.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label48.AutoSize = true;
+            this.label48.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label48.Location = new System.Drawing.Point(5, 262);
+            this.label48.Name = "label48";
+            this.label48.Padding = new System.Windows.Forms.Padding(3);
+            this.label48.Size = new System.Drawing.Size(34, 32);
+            this.label48.TabIndex = 12;
+            this.label48.Text = "8";
+            this.label48.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label49
+            // 
+            this.label49.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label49.AutoSize = true;
+            this.label49.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label49.Location = new System.Drawing.Point(5, 296);
+            this.label49.Name = "label49";
+            this.label49.Padding = new System.Windows.Forms.Padding(3);
+            this.label49.Size = new System.Drawing.Size(34, 32);
+            this.label49.TabIndex = 13;
+            this.label49.Text = "9";
+            this.label49.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label50
+            // 
+            this.label50.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label50.AutoSize = true;
+            this.label50.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label50.Location = new System.Drawing.Point(5, 330);
+            this.label50.Name = "label50";
+            this.label50.Padding = new System.Windows.Forms.Padding(3);
+            this.label50.Size = new System.Drawing.Size(34, 34);
+            this.label50.TabIndex = 14;
+            this.label50.Text = "10";
+            this.label50.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // defaultCourseSelectorRB
+            // 
+            this.defaultCourseSelectorRB.Appearance = System.Windows.Forms.Appearance.Button;
+            this.defaultCourseSelectorRB.Checked = true;
+            this.defaultCourseSelectorRB.Location = new System.Drawing.Point(47, 27);
+            this.defaultCourseSelectorRB.Name = "defaultCourseSelectorRB";
+            this.defaultCourseSelectorRB.Size = new System.Drawing.Size(37, 23);
+            this.defaultCourseSelectorRB.TabIndex = 15;
+            this.defaultCourseSelectorRB.TabStop = true;
+            this.defaultCourseSelectorRB.Tag = "1";
+            this.defaultCourseSelectorRB.Text = "     ";
+            this.defaultCourseSelectorRB.UseVisualStyleBackColor = true;
+            this.defaultCourseSelectorRB.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton2.Location = new System.Drawing.Point(92, 27);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(37, 23);
+            this.radioButton2.TabIndex = 16;
+            this.radioButton2.Tag = "11";
+            this.radioButton2.Text = "     ";
+            this.radioButton2.UseVisualStyleBackColor = true;
+            this.radioButton2.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton3
+            // 
+            this.radioButton3.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton3.Location = new System.Drawing.Point(47, 61);
+            this.radioButton3.Name = "radioButton3";
+            this.radioButton3.Size = new System.Drawing.Size(37, 23);
+            this.radioButton3.TabIndex = 17;
+            this.radioButton3.Tag = "2";
+            this.radioButton3.Text = "     ";
+            this.radioButton3.UseVisualStyleBackColor = true;
+            this.radioButton3.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton4
+            // 
+            this.radioButton4.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton4.Location = new System.Drawing.Point(92, 61);
+            this.radioButton4.Name = "radioButton4";
+            this.radioButton4.Size = new System.Drawing.Size(37, 23);
+            this.radioButton4.TabIndex = 18;
+            this.radioButton4.Tag = "12";
+            this.radioButton4.Text = "     ";
+            this.radioButton4.UseVisualStyleBackColor = true;
+            this.radioButton4.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton5
+            // 
+            this.radioButton5.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton5.Location = new System.Drawing.Point(137, 27);
+            this.radioButton5.Name = "radioButton5";
+            this.radioButton5.Size = new System.Drawing.Size(37, 23);
+            this.radioButton5.TabIndex = 19;
+            this.radioButton5.Tag = "21";
+            this.radioButton5.Text = "     ";
+            this.radioButton5.UseVisualStyleBackColor = true;
+            this.radioButton5.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton6
+            // 
+            this.radioButton6.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton6.Location = new System.Drawing.Point(182, 27);
+            this.radioButton6.Name = "radioButton6";
+            this.radioButton6.Size = new System.Drawing.Size(37, 23);
+            this.radioButton6.TabIndex = 20;
+            this.radioButton6.Tag = "31";
+            this.radioButton6.Text = "     ";
+            this.radioButton6.UseVisualStyleBackColor = true;
+            this.radioButton6.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton7
+            // 
+            this.radioButton7.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton7.Location = new System.Drawing.Point(227, 27);
+            this.radioButton7.Name = "radioButton7";
+            this.radioButton7.Size = new System.Drawing.Size(37, 23);
+            this.radioButton7.TabIndex = 21;
+            this.radioButton7.Tag = "39";
+            this.radioButton7.Text = "     ";
+            this.radioButton7.UseVisualStyleBackColor = true;
+            this.radioButton7.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton8
+            // 
+            this.radioButton8.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton8.Location = new System.Drawing.Point(137, 61);
+            this.radioButton8.Name = "radioButton8";
+            this.radioButton8.Size = new System.Drawing.Size(37, 23);
+            this.radioButton8.TabIndex = 22;
+            this.radioButton8.Tag = "22";
+            this.radioButton8.Text = "     ";
+            this.radioButton8.UseVisualStyleBackColor = true;
+            this.radioButton8.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton11
+            // 
+            this.radioButton11.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton11.Location = new System.Drawing.Point(47, 95);
+            this.radioButton11.Name = "radioButton11";
+            this.radioButton11.Size = new System.Drawing.Size(37, 23);
+            this.radioButton11.TabIndex = 25;
+            this.radioButton11.Tag = "3";
+            this.radioButton11.Text = "     ";
+            this.radioButton11.UseVisualStyleBackColor = true;
+            this.radioButton11.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton12
+            // 
+            this.radioButton12.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton12.Location = new System.Drawing.Point(92, 95);
+            this.radioButton12.Name = "radioButton12";
+            this.radioButton12.Size = new System.Drawing.Size(37, 23);
+            this.radioButton12.TabIndex = 26;
+            this.radioButton12.Tag = "13";
+            this.radioButton12.Text = "     ";
+            this.radioButton12.UseVisualStyleBackColor = true;
+            this.radioButton12.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton13
+            // 
+            this.radioButton13.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton13.Location = new System.Drawing.Point(137, 95);
+            this.radioButton13.Name = "radioButton13";
+            this.radioButton13.Size = new System.Drawing.Size(37, 23);
+            this.radioButton13.TabIndex = 27;
+            this.radioButton13.Tag = "23";
+            this.radioButton13.Text = "     ";
+            this.radioButton13.UseVisualStyleBackColor = true;
+            this.radioButton13.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton9
+            // 
+            this.radioButton9.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton9.Location = new System.Drawing.Point(47, 129);
+            this.radioButton9.Name = "radioButton9";
+            this.radioButton9.Size = new System.Drawing.Size(37, 23);
+            this.radioButton9.TabIndex = 23;
+            this.radioButton9.Tag = "4";
+            this.radioButton9.Text = "     ";
+            this.radioButton9.UseVisualStyleBackColor = true;
+            this.radioButton9.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton14
+            // 
+            this.radioButton14.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton14.Location = new System.Drawing.Point(92, 129);
+            this.radioButton14.Name = "radioButton14";
+            this.radioButton14.Size = new System.Drawing.Size(37, 23);
+            this.radioButton14.TabIndex = 28;
+            this.radioButton14.Tag = "14";
+            this.radioButton14.Text = "     ";
+            this.radioButton14.UseVisualStyleBackColor = true;
+            this.radioButton14.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton16
+            // 
+            this.radioButton16.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton16.Location = new System.Drawing.Point(137, 129);
+            this.radioButton16.Name = "radioButton16";
+            this.radioButton16.Size = new System.Drawing.Size(37, 23);
+            this.radioButton16.TabIndex = 30;
+            this.radioButton16.Tag = "24";
+            this.radioButton16.Text = "     ";
+            this.radioButton16.UseVisualStyleBackColor = true;
+            this.radioButton16.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton17
+            // 
+            this.radioButton17.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton17.Location = new System.Drawing.Point(47, 163);
+            this.radioButton17.Name = "radioButton17";
+            this.radioButton17.Size = new System.Drawing.Size(37, 23);
+            this.radioButton17.TabIndex = 31;
+            this.radioButton17.Tag = "5";
+            this.radioButton17.Text = "     ";
+            this.radioButton17.UseVisualStyleBackColor = true;
+            this.radioButton17.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton18
+            // 
+            this.radioButton18.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton18.Location = new System.Drawing.Point(92, 163);
+            this.radioButton18.Name = "radioButton18";
+            this.radioButton18.Size = new System.Drawing.Size(37, 23);
+            this.radioButton18.TabIndex = 32;
+            this.radioButton18.Tag = "15";
+            this.radioButton18.Text = "     ";
+            this.radioButton18.UseVisualStyleBackColor = true;
+            this.radioButton18.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton19
+            // 
+            this.radioButton19.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton19.Location = new System.Drawing.Point(137, 163);
+            this.radioButton19.Name = "radioButton19";
+            this.radioButton19.Size = new System.Drawing.Size(37, 23);
+            this.radioButton19.TabIndex = 33;
+            this.radioButton19.Tag = "25";
+            this.radioButton19.Text = "     ";
+            this.radioButton19.UseVisualStyleBackColor = true;
+            this.radioButton19.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton20
+            // 
+            this.radioButton20.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton20.Location = new System.Drawing.Point(47, 197);
+            this.radioButton20.Name = "radioButton20";
+            this.radioButton20.Size = new System.Drawing.Size(37, 23);
+            this.radioButton20.TabIndex = 34;
+            this.radioButton20.Tag = "6";
+            this.radioButton20.Text = "     ";
+            this.radioButton20.UseVisualStyleBackColor = true;
+            this.radioButton20.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton21
+            // 
+            this.radioButton21.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton21.Location = new System.Drawing.Point(92, 197);
+            this.radioButton21.Name = "radioButton21";
+            this.radioButton21.Size = new System.Drawing.Size(37, 23);
+            this.radioButton21.TabIndex = 35;
+            this.radioButton21.Tag = "16";
+            this.radioButton21.Text = "     ";
+            this.radioButton21.UseVisualStyleBackColor = true;
+            this.radioButton21.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton22
+            // 
+            this.radioButton22.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton22.Location = new System.Drawing.Point(137, 197);
+            this.radioButton22.Name = "radioButton22";
+            this.radioButton22.Size = new System.Drawing.Size(37, 23);
+            this.radioButton22.TabIndex = 36;
+            this.radioButton22.Tag = "26";
+            this.radioButton22.Text = "     ";
+            this.radioButton22.UseVisualStyleBackColor = true;
+            this.radioButton22.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton23
+            // 
+            this.radioButton23.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton23.Location = new System.Drawing.Point(47, 231);
+            this.radioButton23.Name = "radioButton23";
+            this.radioButton23.Size = new System.Drawing.Size(37, 23);
+            this.radioButton23.TabIndex = 37;
+            this.radioButton23.Tag = "7";
+            this.radioButton23.Text = "     ";
+            this.radioButton23.UseVisualStyleBackColor = true;
+            this.radioButton23.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton24
+            // 
+            this.radioButton24.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton24.Location = new System.Drawing.Point(92, 231);
+            this.radioButton24.Name = "radioButton24";
+            this.radioButton24.Size = new System.Drawing.Size(37, 23);
+            this.radioButton24.TabIndex = 38;
+            this.radioButton24.Tag = "17";
+            this.radioButton24.Text = "     ";
+            this.radioButton24.UseVisualStyleBackColor = true;
+            this.radioButton24.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton25
+            // 
+            this.radioButton25.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton25.Location = new System.Drawing.Point(137, 231);
+            this.radioButton25.Name = "radioButton25";
+            this.radioButton25.Size = new System.Drawing.Size(37, 23);
+            this.radioButton25.TabIndex = 39;
+            this.radioButton25.Tag = "27";
+            this.radioButton25.Text = "     ";
+            this.radioButton25.UseVisualStyleBackColor = true;
+            this.radioButton25.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton26
+            // 
+            this.radioButton26.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton26.Location = new System.Drawing.Point(47, 265);
+            this.radioButton26.Name = "radioButton26";
+            this.radioButton26.Size = new System.Drawing.Size(37, 23);
+            this.radioButton26.TabIndex = 40;
+            this.radioButton26.Tag = "8";
+            this.radioButton26.Text = "     ";
+            this.radioButton26.UseVisualStyleBackColor = true;
+            this.radioButton26.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton27
+            // 
+            this.radioButton27.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton27.Location = new System.Drawing.Point(92, 265);
+            this.radioButton27.Name = "radioButton27";
+            this.radioButton27.Size = new System.Drawing.Size(37, 23);
+            this.radioButton27.TabIndex = 41;
+            this.radioButton27.Tag = "18";
+            this.radioButton27.Text = "     ";
+            this.radioButton27.UseVisualStyleBackColor = true;
+            this.radioButton27.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton28
+            // 
+            this.radioButton28.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton28.Location = new System.Drawing.Point(137, 265);
+            this.radioButton28.Name = "radioButton28";
+            this.radioButton28.Size = new System.Drawing.Size(37, 23);
+            this.radioButton28.TabIndex = 42;
+            this.radioButton28.Tag = "28";
+            this.radioButton28.Text = "     ";
+            this.radioButton28.UseVisualStyleBackColor = true;
+            this.radioButton28.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton29
+            // 
+            this.radioButton29.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton29.Location = new System.Drawing.Point(47, 299);
+            this.radioButton29.Name = "radioButton29";
+            this.radioButton29.Size = new System.Drawing.Size(37, 23);
+            this.radioButton29.TabIndex = 43;
+            this.radioButton29.Tag = "9";
+            this.radioButton29.Text = "     ";
+            this.radioButton29.UseVisualStyleBackColor = true;
+            this.radioButton29.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton30
+            // 
+            this.radioButton30.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton30.Location = new System.Drawing.Point(92, 299);
+            this.radioButton30.Name = "radioButton30";
+            this.radioButton30.Size = new System.Drawing.Size(37, 23);
+            this.radioButton30.TabIndex = 44;
+            this.radioButton30.Tag = "19";
+            this.radioButton30.Text = "     ";
+            this.radioButton30.UseVisualStyleBackColor = true;
+            this.radioButton30.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton31
+            // 
+            this.radioButton31.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton31.Location = new System.Drawing.Point(137, 299);
+            this.radioButton31.Name = "radioButton31";
+            this.radioButton31.Size = new System.Drawing.Size(37, 23);
+            this.radioButton31.TabIndex = 45;
+            this.radioButton31.Tag = "29";
+            this.radioButton31.Text = "     ";
+            this.radioButton31.UseVisualStyleBackColor = true;
+            this.radioButton31.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton32
+            // 
+            this.radioButton32.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton32.Location = new System.Drawing.Point(47, 333);
+            this.radioButton32.Name = "radioButton32";
+            this.radioButton32.Size = new System.Drawing.Size(37, 23);
+            this.radioButton32.TabIndex = 46;
+            this.radioButton32.Tag = "10";
+            this.radioButton32.Text = "     ";
+            this.radioButton32.UseVisualStyleBackColor = true;
+            this.radioButton32.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton33
+            // 
+            this.radioButton33.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton33.Location = new System.Drawing.Point(92, 333);
+            this.radioButton33.Name = "radioButton33";
+            this.radioButton33.Size = new System.Drawing.Size(37, 23);
+            this.radioButton33.TabIndex = 47;
+            this.radioButton33.Tag = "20";
+            this.radioButton33.Text = "     ";
+            this.radioButton33.UseVisualStyleBackColor = true;
+            this.radioButton33.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton34
+            // 
+            this.radioButton34.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton34.Location = new System.Drawing.Point(137, 333);
+            this.radioButton34.Name = "radioButton34";
+            this.radioButton34.Size = new System.Drawing.Size(37, 23);
+            this.radioButton34.TabIndex = 48;
+            this.radioButton34.Tag = "30";
+            this.radioButton34.Text = "     ";
+            this.radioButton34.UseVisualStyleBackColor = true;
+            this.radioButton34.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton10
+            // 
+            this.radioButton10.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton10.Location = new System.Drawing.Point(182, 61);
+            this.radioButton10.Name = "radioButton10";
+            this.radioButton10.Size = new System.Drawing.Size(37, 23);
+            this.radioButton10.TabIndex = 24;
+            this.radioButton10.Tag = "32";
+            this.radioButton10.Text = "     ";
+            this.radioButton10.UseVisualStyleBackColor = true;
+            this.radioButton10.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton15
+            // 
+            this.radioButton15.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton15.Location = new System.Drawing.Point(182, 95);
+            this.radioButton15.Name = "radioButton15";
+            this.radioButton15.Size = new System.Drawing.Size(37, 23);
+            this.radioButton15.TabIndex = 29;
+            this.radioButton15.Tag = "33";
+            this.radioButton15.Text = "     ";
+            this.radioButton15.UseVisualStyleBackColor = true;
+            this.radioButton15.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton35
+            // 
+            this.radioButton35.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton35.Location = new System.Drawing.Point(182, 129);
+            this.radioButton35.Name = "radioButton35";
+            this.radioButton35.Size = new System.Drawing.Size(37, 23);
+            this.radioButton35.TabIndex = 49;
+            this.radioButton35.Tag = "34";
+            this.radioButton35.Text = "     ";
+            this.radioButton35.UseVisualStyleBackColor = true;
+            this.radioButton35.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton36
+            // 
+            this.radioButton36.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton36.Location = new System.Drawing.Point(182, 163);
+            this.radioButton36.Name = "radioButton36";
+            this.radioButton36.Size = new System.Drawing.Size(37, 23);
+            this.radioButton36.TabIndex = 50;
+            this.radioButton36.Tag = "35";
+            this.radioButton36.Text = "     ";
+            this.radioButton36.UseVisualStyleBackColor = true;
+            this.radioButton36.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton37
+            // 
+            this.radioButton37.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton37.Location = new System.Drawing.Point(182, 197);
+            this.radioButton37.Name = "radioButton37";
+            this.radioButton37.Size = new System.Drawing.Size(37, 23);
+            this.radioButton37.TabIndex = 51;
+            this.radioButton37.Tag = "36";
+            this.radioButton37.Text = "     ";
+            this.radioButton37.UseVisualStyleBackColor = true;
+            this.radioButton37.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton38
+            // 
+            this.radioButton38.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton38.Location = new System.Drawing.Point(182, 231);
+            this.radioButton38.Name = "radioButton38";
+            this.radioButton38.Size = new System.Drawing.Size(37, 23);
+            this.radioButton38.TabIndex = 52;
+            this.radioButton38.Tag = "37";
+            this.radioButton38.Text = "     ";
+            this.radioButton38.UseVisualStyleBackColor = true;
+            this.radioButton38.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
+            // radioButton39
+            // 
+            this.radioButton39.Appearance = System.Windows.Forms.Appearance.Button;
+            this.radioButton39.Location = new System.Drawing.Point(182, 265);
+            this.radioButton39.Name = "radioButton39";
+            this.radioButton39.Size = new System.Drawing.Size(37, 23);
+            this.radioButton39.TabIndex = 53;
+            this.radioButton39.Tag = "38";
+            this.radioButton39.Text = "     ";
+            this.radioButton39.UseVisualStyleBackColor = true;
+            this.radioButton39.CheckedChanged += new System.EventHandler(this.CourseDetailsSelector_CheckedChanged);
+            // 
             // About
             // 
             this.About.Controls.Add(this.label10);
@@ -1110,6 +2010,11 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.asignedCoursesView)).EndInit();
+            this.Courses.ResumeLayout(false);
+            this.Courses.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.courseSelectionView)).EndInit();
+            this.courseGrid.ResumeLayout(false);
+            this.courseGrid.PerformLayout();
             this.About.ResumeLayout(false);
             this.About.PerformLayout();
             this.assignStudentMenu.ResumeLayout(false);
@@ -1204,6 +2109,66 @@
         private System.Drawing.Printing.PrintDocument printDocument1;
         private System.Windows.Forms.TextBox studentDetailNameTxtBx;
         private System.Windows.Forms.DataGridView studentDetailView;
+        private System.Windows.Forms.TabPage Courses;
+        private System.Windows.Forms.TableLayoutPanel courseGrid;
+        private System.Windows.Forms.Label label36;
+        private System.Windows.Forms.Label label37;
+        private System.Windows.Forms.Label label38;
+        private System.Windows.Forms.Label label39;
+        private System.Windows.Forms.Label label40;
+        private System.Windows.Forms.Label label41;
+        private System.Windows.Forms.Label label42;
+        private System.Windows.Forms.Label label43;
+        private System.Windows.Forms.Label label44;
+        private System.Windows.Forms.Label label45;
+        private System.Windows.Forms.Label label46;
+        private System.Windows.Forms.Label label47;
+        private System.Windows.Forms.Label label48;
+        private System.Windows.Forms.Label label49;
+        private System.Windows.Forms.Label label50;
+        private System.Windows.Forms.RadioButton defaultCourseSelectorRB;
+        private System.Windows.Forms.RadioButton radioButton2;
+        private System.Windows.Forms.RadioButton radioButton3;
+        private System.Windows.Forms.RadioButton radioButton4;
+        private System.Windows.Forms.RadioButton radioButton5;
+        private System.Windows.Forms.RadioButton radioButton6;
+        private System.Windows.Forms.RadioButton radioButton7;
+        private System.Windows.Forms.RadioButton radioButton8;
+        private System.Windows.Forms.RadioButton radioButton10;
+        private System.Windows.Forms.RadioButton radioButton11;
+        private System.Windows.Forms.RadioButton radioButton12;
+        private System.Windows.Forms.RadioButton radioButton13;
+        private System.Windows.Forms.RadioButton radioButton15;
+        private System.Windows.Forms.RadioButton radioButton9;
+        private System.Windows.Forms.RadioButton radioButton14;
+        private System.Windows.Forms.RadioButton radioButton16;
+        private System.Windows.Forms.RadioButton radioButton17;
+        private System.Windows.Forms.RadioButton radioButton18;
+        private System.Windows.Forms.RadioButton radioButton19;
+        private System.Windows.Forms.RadioButton radioButton20;
+        private System.Windows.Forms.RadioButton radioButton21;
+        private System.Windows.Forms.RadioButton radioButton22;
+        private System.Windows.Forms.RadioButton radioButton23;
+        private System.Windows.Forms.RadioButton radioButton24;
+        private System.Windows.Forms.RadioButton radioButton25;
+        private System.Windows.Forms.RadioButton radioButton26;
+        private System.Windows.Forms.RadioButton radioButton27;
+        private System.Windows.Forms.RadioButton radioButton28;
+        private System.Windows.Forms.RadioButton radioButton29;
+        private System.Windows.Forms.RadioButton radioButton30;
+        private System.Windows.Forms.RadioButton radioButton31;
+        private System.Windows.Forms.RadioButton radioButton32;
+        private System.Windows.Forms.RadioButton radioButton33;
+        private System.Windows.Forms.RadioButton radioButton34;
+        private System.Windows.Forms.RadioButton radioButton35;
+        private System.Windows.Forms.RadioButton radioButton36;
+        private System.Windows.Forms.RadioButton radioButton37;
+        private System.Windows.Forms.RadioButton radioButton38;
+        private System.Windows.Forms.RadioButton radioButton39;
+        private System.Windows.Forms.Button checkIntegrityBtn;
+        private System.Windows.Forms.TextBox courseCountTxtBx;
+        private System.Windows.Forms.Label label51;
+        private System.Windows.Forms.DataGridView courseSelectionView;
     }
 }
 

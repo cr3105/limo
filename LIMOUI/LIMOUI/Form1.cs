@@ -273,7 +273,7 @@ namespace LIMOUI
 
                 LimoServer.Open();
                 MySqlCommand cmd = new MySqlCommand(query, LimoServer);
-                toolStripStatusLabel1.Text = cmd.ExecuteNonQuery().ToString();
+                cmd.ExecuteNonQuery().ToString();
             }
             catch (Exception ex)
             {
@@ -1059,6 +1059,145 @@ namespace LIMOUI
                     Convert.ToInt32(asignedCoursesView.Rows[e.RowIndex].Cells[1].Value),
                     Convert.ToInt32(trackDateTxtBx.Text));
             }
+        }
+
+        private void CourseDetailsSelector_CheckedChanged(object sender, EventArgs e)
+        {
+            if(((RadioButton)sender).Checked == true)
+            {
+                int nCourseID = Convert.ToInt32(((RadioButton)sender).Tag);
+                courseCountTxtBx.Text = GetCourse(nCourseID).ToString();
+            }
+        }
+
+        private int GetCourse(int nCourseID)
+        {
+            int nCount = 0;
+            try
+            {
+                LimoServer.Open();
+                string query = string.Format("SELECT student_choices.id, students.fname, students.lname " +
+                    "FROM student_choices " +
+                    "INNER JOIN students ON student_choices.student_id = students.id " +
+                    "WHERE course_id = '{0}';", nCourseID);
+
+                MySqlDataAdapter daTemp = new MySqlDataAdapter(query, LimoServer);
+                DataSet dsTemp = new DataSet();
+
+                courseSelectionView.Visible = false;
+                courseSelectionView.ClearSelection();
+                courseSelectionView.DataSource = null;
+                courseSelectionView.Refresh();
+
+                daTemp.Fill(dsTemp, "student_choices");
+                courseSelectionView.DataSource = dsTemp;
+                courseSelectionView.DataMember = "student_choices";
+                courseSelectionView.Refresh();
+
+                courseSelectionView.Columns[0].HeaderText = "ID";
+                courseSelectionView.Columns[1].HeaderText = "Name";
+                courseSelectionView.Columns[2].HeaderText = "Nachname";
+
+                courseSelectionView.Columns[0].Visible = false;
+
+                nCount = dsTemp.Tables[0].Rows.Count;
+
+                courseSelectionView.Sort(courseSelectionView.Columns[2], ListSortDirection.Ascending);
+                courseSelectionView.Visible = true;
+            }
+            catch (Exception ex)
+            {
+                toolStripStatusLabel1.Text = ex.Message;
+            }
+            finally
+            {
+                LimoServer.Close();
+            }
+
+            return nCount;
+        }
+
+        private void LimoUiTabControl_Selected(object sender, TabControlEventArgs e)
+        {
+            if(e.TabPageIndex == 3)
+            {
+                int nCourseID = Convert.ToInt32(defaultCourseSelectorRB.Tag);
+                courseCountTxtBx.Text = GetCourse(nCourseID).ToString();
+                defaultCourseSelectorRB.Checked = true;
+            }
+        }
+
+        private void CheckIntegrityBtn_Click(object sender, EventArgs e)
+        {
+            List<int> zombies = CheckStudentChoicesIntegrity();
+
+            if(zombies != null)
+            {
+                string message = "Do you want to delete abandoned student choices?(";
+
+                foreach(int id in zombies)
+                {
+                    message += string.Format("{0},", id);
+                }
+
+                message.TrimEnd(new char[] { ',' });
+                message += ")";
+
+                if(DialogResult.Yes == 
+                    MessageBox.Show(message, 
+                                    "Database Integrity", 
+                                    MessageBoxButtons.YesNo, 
+                                    MessageBoxIcon.Question))
+                {
+                    foreach (int id in zombies)
+                    {
+                        DeleteStudentChoices(id);
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("No abandoned student choices found!",
+                                    "Database Integrity",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Information);
+            }
+        }
+
+        private List<int> CheckStudentChoicesIntegrity()
+        {
+            List<int> zombies = new List<int>();
+            try
+            {
+                LimoServer.Open();
+                string query = "SELECT * FROM students RIGHT JOIN student_choices ON students.id = student_choices.student_id;";
+
+                MySqlDataAdapter daTemp = new MySqlDataAdapter(query, LimoServer);
+                DataSet dsTemp = new DataSet();
+
+                daTemp.Fill(dsTemp, "student_choices");
+
+                foreach(DataRow arow in dsTemp.Tables[0].Rows)
+                {
+                    if(arow[0].GetType() != arow[6].GetType())
+                    {
+                        if(zombies.Contains((int)arow[6]) == false)
+                        {
+                            zombies.Add((int)arow[6]);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                toolStripStatusLabel1.Text = ex.Message;
+            }
+            finally
+            {
+                LimoServer.Close();
+            }
+
+            return zombies.Count > 0 ? zombies : null;
         }
 
         private void UpdateStudent(int nStudentId, string sFname, string sLname, int nClass, int nSchoolType)
