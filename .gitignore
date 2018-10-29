@@ -12,3 +12,5 @@
 /.vs/LIMO/v15
 /.vs
 /LIMOUI/.vs/LIMOUI/v15
+/LIMOUI/DBAccess/bin
+/LIMOUI/DBAccess/obj
