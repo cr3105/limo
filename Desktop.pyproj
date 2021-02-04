@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{49b51fa0-bdf1-4d3b-9dea-7b83ff034dce}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>david_code_modified.py</StartupFile>
+    <StartupFile>generate_excel_from_db.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -23,6 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="david_code_modified.py" />
+    <Compile Include="generate_excel_from_db.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Logs\" />
